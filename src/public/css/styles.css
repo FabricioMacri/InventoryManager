@@ -1,0 +1,120 @@
+.cardShadow {
+    transition: transform 0.2s; /* Smooth transition for scaling */
+    margin-top: 2rem;
+}
+  
+.cardShadow:hover {
+    animation: shadowAnimation 1s infinite;
+    transform: scale(1.05); /* Slightly scale up the card on hover */
+}
+
+.cardsPromo {
+
+    cursor: pointer;
+    transition: transform 0.2s; /* Smooth transition for scaling */
+    width: 12rem; 
+    height: 15rem; 
+    margin: 4rem;
+}
+.cardsPromo:hover {
+    animation: shadowAnimation 1s infinite;
+    transform: scale(1.05); /* Slightly scale up the card on hover */
+}
+
+.circular-card {
+    border-radius: 50%;
+    margin: 1rem;
+    overflow: hidden;
+    width: 200px;
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+    position: relative;
+}
+
+.circular-card img {
+    border-radius: 50%;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.circular-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* Estilo para el contenedor de texto */
+.circular-card .card-body {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white; /* Cambia el color según sea necesario */
+    text-align: center;
+    padding: 10px; /* Ajusta el padding si es necesario */
+    box-sizing: border-box;
+    z-index: 2;
+    pointer-events: none;
+}
+
+/* Opcional: Estilos adicionales para el texto */
+.circular-card .card-body h1,
+.circular-card .card-body p {
+    margin: 0; /* Elimina el margen por defecto */
+}
+
+.circular-card .card-body h1 {
+    font-size: 1.5rem; /* Ajusta el tamaño del encabezado */
+}
+
+.circular-card .card-body p {
+    font-size: 1rem; /* Ajusta el tamaño del párrafo */
+}
+
+.card-glow {
+    margin-inline: 4rem;
+    margin-top: 2rem;
+    position: relative;
+    z-index: 1;
+    border-radius: 10px;
+    padding: 20px;
+    background-color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .card-glow::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    z-index: -1;
+    border-radius: 12px;
+    background: linear-gradient(90deg, #59AFB7, #2384A3, #092F4D, #2384A3, #59AFB7);
+    background-size: 300% 300%;
+    animation: glowing 20s linear infinite;
+  }
+  
+  @keyframes glowing {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+  
+  
