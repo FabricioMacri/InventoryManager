@@ -8,8 +8,8 @@ const passport = require('passport');
 const session = require("express-session");
 
 //Import modules: 
-const clientRouter = require('./routes/client.router.js');
-const adminRouter = require('./routes/admin.router.js');
+const clientRouter = require('./routes/inventorys.router.js');
+const usersRouter = require('./routes/user.router.js');
 
 // Server, puerto y conexion a la BD
 const app = express();
@@ -37,7 +37,7 @@ app.set("views", "./src/views");
 
 // Routes
 app.use("/client", clientRouter);
-app.use("/admin", adminRouter);
+app.use("/users", usersRouter);
 
 // Listener
 const httpServer = app.listen(PUERTO, () => {

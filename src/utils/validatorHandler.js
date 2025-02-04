@@ -20,7 +20,7 @@ class ValidatorHandler {
         this.message = "El handler no encontro ningun error";
     }
 
-    async errorLogs(notificated) {
+    async errorLogs() {
 
         const newError = new ErrorsModel({
 
@@ -49,7 +49,7 @@ class ValidatorHandler {
         this.location = location;
         this.message = error;
 
-        this.errorNotification();
+        this.errorLogs();
     }
 
     async logicErrors(location, error) {
@@ -59,7 +59,7 @@ class ValidatorHandler {
         this.location = location;
         this.message = error;
 
-        this.errorNotification();
+        this.errorLogs();
     }
     
     async frontError(location, error) {
@@ -69,7 +69,7 @@ class ValidatorHandler {
         this.location = location;
         this.message = String(error);
 
-        this.errorNotification();
+        this.errorLogs();
     }
 }
 

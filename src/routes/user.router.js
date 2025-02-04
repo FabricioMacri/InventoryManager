@@ -10,7 +10,7 @@ const errorHandler = require("../utils/validatorHandler.js");
 const UsersManager = require("../controllers/usersManager.controller.js");
 const usersManager = new UsersManager();
 
-//Register
+//Register - OK
 router.post("/register", async (req, res) => {
     const { name, email, password } = req.body;
 
@@ -38,13 +38,13 @@ router.post("/register", async (req, res) => {
 
 })
 
-//Login: 
+//Login - OK
 router.post("/login", async (req, res) => {
-    const {usuario, password} = req.body; 
+    const {email, password} = req.body; 
 
     try {
         //El controlador hace las validaciones necesarias y retorna un objeto con el usuario o un error
-        const user = await usersManager.loginUser(usuario, password);
+        const user = await usersManager.loginUser(email, password);
 
         if (!user.status) {
             return res.status(400).json({ error: user.error, message: user.message });
@@ -61,7 +61,7 @@ router.post("/login", async (req, res) => {
             { expiresIn: '12h' }
         );
 
-        res.cookie("inventaryCookieToken", token, { maxAge: 3600000, httpOnly: true, secure: true });
+        return res.status(200).cookie("inventaryCookieToken", token, { maxAge: 3600000, httpOnly: true, secure: true });
 
     } catch (error) {
         console.error("Error al loguear el usuario:", error);

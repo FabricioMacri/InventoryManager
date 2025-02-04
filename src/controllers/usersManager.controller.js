@@ -10,7 +10,7 @@ const UsersModel = require("../models/users.model.js");
 
 class UsersManager {
 
-    //OK - Falta testear
+    //OK - Testeado
     async registerUser({ name, email, password }) {
         
         if (!name || !email || !password) {
@@ -53,7 +53,6 @@ class UsersManager {
                     status: false
                 };
             }
-            
             //Validamos si el usuario existe
             const existingUser = await UsersModel.findOne({ email: email });
             if (!existingUser) {
@@ -66,7 +65,7 @@ class UsersManager {
             }
 
             //Validamos la contraseña
-            if (isValidPassword(password, usuario)) {
+            if (!isValidPassword(password, existingUser)) {
                 return {
                     code: 400,
                     error: 'Invalid request',
