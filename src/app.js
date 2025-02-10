@@ -36,6 +36,23 @@ app.set("views", "./src/views");
 
 
 // Routes
+app.post("/testing", (req, res) => {
+    try {
+
+        const JWTValidator = require("./services/tokenValidator.js");
+        const token = req.headers.authorization.split(" ")[1];
+        const decoded = JWTValidator(token);
+        console.log("Decoded", decoded);
+        if(!decoded.status) {
+            return res.status(400).json({ error: decoded.error, message: decoded.message });
+        }
+
+        return res.status(200).json({ message: "Token válido", user: decoded.user });
+    } catch (error) {
+        console.log("Error en la ruta testing", error);
+        return res.status(500).send("Internal server error");
+    }
+});
 app.use("/client", clientRouter);
 app.use("/users", usersRouter);
 

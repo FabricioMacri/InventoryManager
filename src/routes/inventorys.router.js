@@ -1,91 +1,213 @@
 const express = require('express');
 const router = express.Router();
 
-const ProductsModel = require('../models/inventorys.model.js');
+//Controllers
+const inventoryManager = require('../controllers/inventoryManager.controller.js');
+const InventoryManager = new inventoryManager();
 
-router.get('/products', async (req, res) => {
+//Utils
+const errorHandler = require('../utils/validatorHandler.js');
+const errorHanlder = new errorHandler();
+const JWTValidator = require("../services/tokenValidator.js");
+
+//RUTAS:
+
+//Nuevo inventario - Testeado ✅
+router.post('/newInventory', async (req, res) => {
+    const { email, name } = req.body;
 
     try {
-        const limit = req.query.limit;
-        const products = await ProductsModel.find();
-
-        if (limit) {
-            const products = await ProductsModel.find();
-            res.json(products.slice(0, limit));
-        } else {
-
-            res.json(products.slice(0, 10));
-        }
-    } catch (error) {
-
-        // Manejo de errores 
-        console.error("(500) No se encuentran los productos", error);
-        res.status(500).json("Error en el servidor.");
-    }
-
-
-})
-
-router.get("/products/:id", async (req, res) => {
-
-    const IDreq = req.params.id; 
-    try {
-
-        const product = await ProductsModel.findById(IDreq);
-        if (!product) {
-            return res.json({
-                error: "Producto no encontrado"
-            });
+        const token = req.headers.authorization.split(" ")[1];
+        const decoded = JWTValidator(token);
+        if(!decoded.status) {
+            return res.status(400).json({ error: decoded.error, message: decoded.message });
         }
 
-        res.json(product);
+        const newInventory = await InventoryManager.newInventory(email, name);
+
+        if(!newInventory.status) {
+            return res.status(400).json({ error: newInventory.error, message: newInventory.message });
+        }
+
+        return res.status(200).json({ message: 'Inventario creado con éxito' });
+
     } catch (error) {
-        console.error("Error al obtener producto", error);
-        res.status(500).json({
-            error: "Error interno del servidor"
+        console.error("Error al crear el inventario:", error);
+        errorHanlder.controllerError('Inventorys Router - /newInventory', error);
+        return res.status(500).json({
+            error: 'Internal server error',
+            message: 'Hubo un problema al crear el inventario'
         });
     }
-})
+});
 
-router.post("/", async (req, res) => {
-    const newProduct = req.body;
-    //Tomamos los datos del body de la petición. 
-    try {
-        const product = new ProductsModel(newProduct);
-        await product.save();
-        res.send({message: "Usuario creado exitsoamente", product});
-    } catch (error) {
-        res.status(500).json("Error interno del servidor", error);
-    }
-})
-
-//Actualizamos un usuario por ID
-router.put("/:id",  async (req, res) => {
-    const IDreq = req.params.id; 
-    const newData = req.body;
+//Obtener todos los inventarios - Testeado ✅
+router.post('/getInventorys', async (req, res) => {
+    const { email, name } = req.body;
 
     try {
-        const product = await ProductsModel.findByIdAndUpdate(IDreq, newData);
-        res.status(200).send({message: "Producto actualizado: ", product});
-        
-    } catch (error) {
-        res.status(500).json("Error interno del servidor");
-    }
-})
-
-//Eliminamos un usuario por ID
-router.delete("/:id", async (req, res) => {
-    const IDreq = req.params.id;
-    try {
-        const product = await ProductsModel.findByIdAndDelete(IDreq);
-        if(!product) {
-            return res.status(404).send("Producto no encontrado");
+        const token = req.headers.authorization.split(" ")[1];
+        const decoded = JWTValidator(token);
+        if(!decoded.status) {
+            return res.status(400).json({ error: decoded.error, message: decoded.message });
         }
-        res.status(200).send("Producto eliminado correctamente");
+
+        const inventory = await InventoryManager.getAllInventories(email, name);
+
+        if(!inventory.status) {
+            return res.status(400).json({ error: inventory.error, message: inventory.message });
+        }
+
+        return res.status(200).json({ inventory });
+
     } catch (error) {
-        res.status(500).send("Error interno del servidor");
+        console.error("Error al buscar el inventario:", error);
+        errorHanlder.controllerError('Inventorys Router - /getInventorys', error);
+        return res.status(500).json({
+            error: 'Internal server error',
+            message: 'Hubo un problema al buscar el inventario'
+        });
     }
-})
+});
+
+//Agregar item - Testeado ✅
+router.post('/addItem', async (req, res) => {
+    const { email, inventoryName, name, description, price, code, stock, category, subCategory, thumbnail } = req.body;
+
+    try {
+
+        const token = req.headers.authorization.split(" ")[1];
+        const decoded = JWTValidator(token);
+        if(!decoded.status) {
+            return res.status(400).json({ error: decoded.error, message: decoded.message });
+        }
+        
+        const newProduct = await InventoryManager.addItem(
+            { email, inventoryName, name, description, price, code, stock, category, subCategory, thumbnail }
+        );
+
+        if(!newProduct.status) {
+            return res.status(400).json({ error: newProduct.error, message: newProduct.message });
+        }
+
+        return res.status(200).json({ message: 'Producto registrado con éxito' });
+
+    } catch (error) {
+        console.error("Error al crear el producto:", error);
+        errorHanlder.controllerError('Inventorys Router - /addProduct', error);
+        return res.status(500).json({
+            error: 'Internal server error',
+            message: 'Hubo un problema al registrar el producto'
+        });
+    }
+});
+
+//Obtener inventario - Testeado ✅
+router.post('/getItems', async (req, res) => {
+
+    try {
+        const token = req.headers.authorization.split(" ")[1];
+        const decoded = JWTValidator(token);
+        if(!decoded.status) {
+            return res.status(400).json({ error: decoded.error, message: decoded.message });
+        }
+
+        const inventory = await InventoryManager.getItems(req.body);
+
+        if(!inventory.status) {
+            return res.status(400).json({ error: inventory.error, message: inventory.message });
+        }
+
+        return res.status(200).json({ inventory });
+
+    } catch (error) {
+        console.error("Error al obtener el inventario:", error);
+        errorHanlder.controllerError('Inventorys Router - /getItems', error);
+        return res.status(500).json({
+            error: 'Internal server error',
+            message: 'Hubo un problema al obtener el inventario'
+        });
+    }
+});
+
+//Obtener item por ID - Testeado ✅
+router.post('/getItemByCode', async (req, res) => {
+    try {
+        const token = req.headers.authorization.split(" ")[1];
+        const decoded = JWTValidator(token);
+        if(!decoded.status) {
+            return res.status(400).json({ error: decoded.error, message: decoded.message });
+        }
+
+        const item = await InventoryManager.getItemByCode(req.body);
+
+        if(!item.status) {
+            return res.status(400).json({ error: item.error, message: item.message });
+        }
+
+        return res.status(200).json({ item });
+    } catch (error) {
+        console.error("Error al obtener el producto:", error);
+        errorHanlder.controllerError('Inventorys Router - /getItemByCode', error);
+        return res.status(500).json({
+            error: 'Internal server error',
+            message: 'Hubo un problema al obtener el producto'
+        });
+    }
+});
+//Actualizar item - Testeado ✅
+router.put('/updateItem', async (req, res) => {
+
+    try {
+        const token = req.headers.authorization.split(" ")[1];
+        const decoded = JWTValidator(token);
+        if(!decoded.status) {
+            return res.status(400).json({ error: decoded.error, message: decoded.message });
+        }
+
+        const updatedProduct = await InventoryManager.updateProduct(req.body);
+
+        if(!updatedProduct.status) {
+            return res.status(400).json({ error: updatedProduct.error, message: updatedProduct.message });
+        }
+
+        return res.status(200).json({ message: 'Producto actualizado con éxito', updatedProduct });
+
+    } catch (error) {
+        console.error("Error al actualizar el producto:", error);
+        errorHanlder.controllerError('Inventorys Router - /updateProduct', error);
+        return res.status(500).json({
+            error: 'Internal server error',
+            message: 'Hubo un problema al actualizar el producto'
+        });
+    }
+});
+//Eliminar item - haciendo 🔨
+router.delete('/deleteItem', async (req, res) => {
+    try {
+        const token = req.headers.authorization.split(" ")[1];
+        const decoded = JWTValidator(token);
+        if(!decoded.status) {
+            return res.status(400).json({ error: decoded.error, message: decoded.message });
+        }
+
+        const deletedProduct = await InventoryManager.deleteProduct(req.body);
+
+        if(!deletedProduct.status) {
+            return res.status(400).json({ error: deletedProduct.error, message: deletedProduct.message });
+        }
+
+        return res.status(200).json({ message: 'Producto eliminado con éxito' });
+
+    } catch (error) {
+        console.error("Error al eliminar el producto:", error);
+        errorHanlder.controllerError('Inventorys Router - /deleteProduct', error);
+        return res.status(500).json({
+            error: 'Internal server error',
+            message: 'Hubo un problema al eliminar el producto'
+        });
+    }
+});
 
 
 module.exports = router;

@@ -5,53 +5,100 @@ const errorHanlder = new ErrorHanlder();
 
 //Models:
 const InventorytModel = require("../models/inventorys.model.js");
+const UsersModel = require("../models/users.model.js");
 
 class ProductManager {
 
-    //OK - Falta testear
-    async getUser(email) {
+    //OK - Testeado ✅
+    async getInventory(email, name) {
 
         try {
 
-            if (!email) {
+            if (!email || !name) {
                 return {
                     error: 'Invalid request',
-                    message: 'El usuario no fue enviado',
-                    status: false
-                };
-            }
-            
-            const user = await InventorytModel.findOne({ email: email });
-
-            if (!user) {
-                return {
-                    error: 'Invalid request',
-                    message: 'El usuario no existe',
+                    message: 'El usuario o el nombre del inventario no fueron enviado',
                     status: false
                 };
             }
 
+            const inventory = await InventorytModel.findOne({ 
+                email: email, 
+                name: name 
+            });
+
+            if (!inventory) {
+                return {
+                    error: 'Invalid request',
+                    message: 'No se encontro el inventario',
+                    status: false
+                };
+            }
             return {
                 status: true,
-                user: user
-            }
+                inventory: inventory
+            };
 
         } catch (error) {
-            errorHanlder.controllerError('ProductManager - getUser', error);
-            console.log("Error al obtener usuario", error);
+            errorHanlder.controllerError('ProductManager - getInventory', error);
+            console.log("Error al obtener inventario", error);
             return {
                 error: 'Internal server error',
-                message: 'Hubo un problema al buscar el usuario',
+                message: 'Hubo un problema al buscar el inventario',
                 status: false
             };
         }
     }
-    
-    //OK - Falta testear
-    async addProduct({ user_id, name, description, price, code, stock, category, subCategory, thumbnail }) {
+    //OK - Testeado ✅
+    async newInventory(email, name) {
         try {
 
-            if (!name || !description || !price || !code || !stock || !category) {
+            if (!email || !name) {
+                return {
+                    error: 'Invalid request',
+                    message: 'El usuario o el nombre del inventario no fueron enviado',
+                    status: false
+                };
+            }
+
+            console.log(name);
+            const inventory = await this.getInventory(email, name);
+
+            if (inventory.status) {
+                return {
+                    error: 'Invalid request',
+                    message: 'Ya tienes un inventario con ese nombre',
+                    status: false
+                };
+            }
+
+            const newInventory = new InventorytModel({
+                name: name,
+                email: email,
+                items: []
+            });
+
+            await newInventory.save();
+
+            return {
+                status: true
+            };
+
+        } catch (error) {
+            errorHanlder.controllerError('ProductManager - newInventory', error);
+            console.log("Error al crear inventario", error);
+            return {
+                error: 'Internal server error',
+                message: 'Hubo un problema al crear el inventario',
+                status: false
+            };
+        }
+    }
+    //OK - Testeado ✅
+    async addItem(props) {
+        try {
+            const { email, inventoryName, name, description, price, code, stock, category, subCategory, thumbnail } = props;
+            if (!name || !price || !code || !category) {
                 return {
                     error: 'Invalid request',
                     message: 'Uno o más de los campos obligatorios no fue enviado',
@@ -59,17 +106,17 @@ class ProductManager {
                 };
             }
 
-            const reqUser = await this.getUser(user_id);
+            const SelectedInventory = await this.getInventory(email, inventoryName);
 
-            if(!reqUser.status){
+            if(!SelectedInventory.status){
                 return {
-                    error: reqUser.error,
-                    message: reqUser.message,
+                    error: SelectedInventory.error,
+                    message: SelectedInventory.message,
                     status: false
                 };
             }
 
-            const product = reqUser.user.some(product => product.code === code);
+            const product = SelectedInventory.inventory.items.some(product => product.code === code);
 
             if (product) {
                 return {
@@ -79,19 +126,21 @@ class ProductManager {
                 };
             }
 
-            const newProduct = new ProductModel({
+            const newProduct = {
                 name,
-                description,
+                description: description || '',
                 price,
                 code,
-                stock,
+                stock: stock|| 0,
                 category,
-                subCategory,
-                status: true,
+                subCategory: subCategory|| '',
+                status: stock ? true : false,
                 thumbnail: thumbnail || []
-            });
+            };
 
-            await newProduct.save();
+            SelectedInventory.inventory.items.push(newProduct);
+
+            await SelectedInventory.inventory.save();
 
             return {
                 status: true
@@ -107,29 +156,29 @@ class ProductManager {
             };
         }
     }
+    //OK - Testeado ✅
+    async getItems(props) {
+        try {
+            const { email, inventoryName, available, category, alfabetic } = props;
+            const selectedInventory = await this.getInventory(email, inventoryName);
 
-    //OK - Falta testear
-    async getItems(user_id, available, category, alfabetic) {
-        try { 
-            const reqUser = await this.getUser(user_id);
-
-            if(!reqUser.status){
+            if(!selectedInventory.status){
                 return {
-                    error: reqUser.error,
-                    message: reqUser.message,
+                    error: selectedInventory.error,
+                    message: selectedInventory.message,
                     status: false
                 };
             }
 
             // Acceder a la propiedad _doc y remover los atributos '_id', 'createdAt', y 'updatedAt'
-            const clearItems = reqUser.user.map(item => {
+            const clearItems = selectedInventory.inventory.items.map(item => {
                 const { _id, createdAt, updatedAt, ...rest } = item._doc;
                 return rest;
             });
 
             const response = {
                 status: true,
-                items: {}
+                items: clearItems
             }
 
             if (available) {
@@ -164,33 +213,64 @@ class ProductManager {
             };
         }
     }
-
-    //OK - Falta testear
-    async getProductByCode(user_id, code) {
+    //OK - Testeado ✅
+    async getAllInventories(email) {
         try {
-            const reqUser = await this.getUser(user_id);
 
-            if(!reqUser.status){
+            if (!email) {
                 return {
-                    error: reqUser.error,
-                    message: reqUser.message,
+                    error: 'Invalid request',
+                    message: 'El usuario no fue enviado',
                     status: false
                 };
             }
 
-            const product = reqUser.user.find(product => product.code === code);
+            const inventorys = await InventorytModel.find({ email: email });
 
-            if (!product) {
+            if (!inventorys) {
+                return {
+                    error: 'Invalid request',
+                    message: 'No se encontraron inventarios',
+                    status: false
+                };
+            }
+            return {
+                status: true,
+                inventory: inventorys
+            };
+            
+        } catch (error) {
+            console.log("Error al buscar inventarios", error);
+            errorHanlder.controllerError('ProductManager - getAllInventories', error);
+        }
+    }
+    //OK - Testado ✅
+    async getItemByCode(props) {
+        try {
+            const { email, inventoryName, code } = props;
+            const selectedInventory = await this.getInventory(email, inventoryName);
+
+            if(!selectedInventory.status){
+                return {
+                    error: selectedInventory.error,
+                    message: selectedInventory.message,
+                    status: false
+                };
+            }
+
+            const item = selectedInventory.inventory.items.find(product => product.code === code);
+
+            if (!item) {
                 return {
                     error: 'Invalid request',
                     message: 'El código de producto no existe',
                     status: false
                 };
             }
-            const { _id, createdAt, updatedAt, ...clearProduct } = product._doc;
+            const { _id, createdAt, updatedAt, ...clearItem } = item._doc;
             return {
                 status: true,
-                product: clearProduct
+                product: clearItem
             }
 
         } catch (error) {
@@ -203,38 +283,43 @@ class ProductManager {
             };
         }
     }
-
-    //OK - Falta testear
-    async updateProduct(user_id, code, updateData) {
+    //OK - Testeado ✅
+    async updateProduct(props) {
         try {
-
-            const reqUser = await this.getUser(user_id);
-
-            if(!reqUser.status){
+            const { email, inventoryName, name, description, price, code, stock, category, subCategory, thumbnail } = props;
+            const updateData = { name, description, price, stock, category, subCategory, thumbnail };
+            const SelectedInventory = await this.getInventory(email, inventoryName);
+    
+            if (!SelectedInventory.status) {
                 return {
-                    error: reqUser.error,
-                    message: reqUser.message,
+                    error: SelectedInventory.error,
+                    message: SelectedInventory.message,
                     status: false
                 };
             }
-
-            const product = reqUser.user.find(product => product.code === code);
-
-            if (!product) {
+    
+            const item = SelectedInventory.inventory.items.find(product => product.code === code);
+    
+            if (!item) {
                 return {
                     error: 'Invalid request',
                     message: 'El código de producto no existe',
                     status: false
                 };
             }
-            const { _id, createdAt, updatedAt, ...clearProduct } = product._doc;
-
-            Object.assign(clearProduct, updateData);
-
-            await reqUser.user.save();
-
+    
+            // Actualizar solo los campos que se proporcionan en updateData y dejar el resto sin cambios
+            Object.keys(updateData).forEach(key => {
+                if (updateData[key] !== undefined) {
+                    item[key] = updateData[key];
+                }
+            });
+    
+            await SelectedInventory.inventory.save();
+    
             return {
-                status: true
+                status: true,
+                item: item.toObject() // Devuelve el objeto actualizado
             };
         } catch (error) {
             console.log("Error al actualizar el producto", error);
@@ -246,35 +331,36 @@ class ProductManager {
             };
         }
     }
-
-    //OK - Falta testear
-    async deleteProduct(user_id, code) {
+    //Revisar - Testeado ✅
+    async deleteProduct(props) {
         try {
-
-            const reqUser = await this.getUser(user_id);
-
-            if(!reqUser.status){
+            const { email, inventoryName, code } = props;
+            const SelectedInventory = await this.getInventory(email, inventoryName);
+    
+            if (!SelectedInventory.status) {
                 return {
-                    error: reqUser.error,
-                    message: reqUser.message,
+                    error: SelectedInventory.error,
+                    message: SelectedInventory.message,
                     status: false
                 };
             }
-
-            const itemIndex = reqUser.items.findIndex(item => item.code === code);
-
-            if (itemIndex === -1) {
+    
+            const index = SelectedInventory.inventory.items.findIndex(item => item.code === code);
+            if (index !== -1) {
+                SelectedInventory.inventory.items.splice(index, 1);
+            }else {
                 return {
                     error: 'Invalid request',
                     message: 'El código de producto no existe',
                     status: false
                 };
             }
-
-            reqUser.items.splice(itemIndex, 1);
-            await inventario.save();
-
-            return { status: true }
+            
+            await SelectedInventory.inventory.save();
+            console.log(SelectedInventory.inventory);
+            return {
+                status: true
+            };
             
         } catch (error) {
             console.log("Error al eliminar el producto", error);

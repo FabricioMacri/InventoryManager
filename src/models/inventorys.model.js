@@ -12,8 +12,7 @@ const ItemsSchema = new Schema({
     },
     code: {
         type: String,
-        required: true,
-        unique: true
+        required: true
     },
     price: {
         type: Number,
@@ -43,12 +42,29 @@ const ItemsSchema = new Schema({
 });
 
 const InventorySchema = new Schema({
-    user_id: { 
-        type: mongoose.Schema.Types.ObjectId, 
-        ref: 'user', 
-        required: true 
+    email: {
+        type: String,
+        required: true
     },
-    items: [ItemsSchema]
+    name: {
+        type: String,
+        required: true
+    },
+    items: {
+        type: [ItemsSchema],
+        default: [] // Por defecto es un array vacío
+    }
+});
+
+// Validación única manual para items.code dentro de cada inventario
+InventorySchema.pre('save', function(next) {
+    const inventory = this;
+    const codes = inventory.items.map(item => item.code);
+    const uniqueCodes = new Set(codes);
+    if (codes.length !== uniqueCodes.size) {
+        return next(new Error('Los códigos de los ítems deben ser únicos dentro de cada inventario.'));
+    }
+    next();
 });
 
 const InventoryModel = mongoose.model('inventorys', InventorySchema);
