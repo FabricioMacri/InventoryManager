@@ -10,7 +10,9 @@ const UsersModel = require("../models/users.model.js");
 
 class UsersManager {
 
-    //OK - Testeado
+    //Users:
+
+    //OK - Testeado ✅
     async registerUser({ name, email, password }) {
         
         if (!name || !email || !password) {
@@ -41,10 +43,10 @@ class UsersManager {
 
         return { status: true, user: newUser };
     }
-
     //OK - Falta testear
-    async loginUser (email, password) {
+    async loginUser(props) {
         try {
+            const { email, password, role } = props;
             if (!email || !password) {
                 return {
                     code: 400,
@@ -63,13 +65,20 @@ class UsersManager {
                     status: false
                 };
             }
-
             //Validamos la contraseña
             if (!isValidPassword(password, existingUser)) {
                 return {
                     code: 400,
                     error: 'Invalid request',
                     message: 'La contraseña es incorrecta',
+                    status: false
+                };
+            }
+            if(existingUser.role !== role){
+                return {
+                    code: 403,
+                    error: 'Unauthorized',
+                    message: 'No tienes permisos para realizar esta acción',
                     status: false
                 };
             }

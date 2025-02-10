@@ -5,7 +5,6 @@ const errorHanlder = new ErrorHanlder();
 
 //Models:
 const InventorytModel = require("../models/inventorys.model.js");
-const UsersModel = require("../models/users.model.js");
 
 class ProductManager {
 
@@ -172,6 +171,7 @@ class ProductManager {
 
             // Acceder a la propiedad _doc y remover los atributos '_id', 'createdAt', y 'updatedAt'
             const clearItems = selectedInventory.inventory.items.map(item => {
+                // eslint-disable-next-line no-unused-vars
                 const { _id, createdAt, updatedAt, ...rest } = item._doc;
                 return rest;
             });
@@ -267,6 +267,7 @@ class ProductManager {
                     status: false
                 };
             }
+            // eslint-disable-next-line no-unused-vars
             const { _id, createdAt, updatedAt, ...clearItem } = item._doc;
             return {
                 status: true,

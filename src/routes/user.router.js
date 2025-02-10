@@ -3,17 +3,16 @@ const express = require("express");
 const jwt = require('jsonwebtoken');
 const passport = require('passport');
 const router = express.Router();
-//Modelos
-const UserModel = require("../models/users.model.js");
 //Handlers
 const errorHandler = require("../utils/validatorHandler.js");
 const UsersManager = require("../controllers/usersManager.controller.js");
 const usersManager = new UsersManager();
 
-//Register - OK
+//Rutas user:
+
+//Register - Testeado ✅
 router.post("/register", async (req, res) => {
     const { name, email, password } = req.body;
-
     try {
         
         const newUser = await usersManager.registerUser({ name, email, password });
@@ -26,14 +25,20 @@ router.post("/register", async (req, res) => {
 
         const token = jwt.sign(
             { 
-                usuario: user.user.usuario, 
-                rol: user.user.rol 
+                usuario: newUser.user.usuario, 
+                rol: newUser.user.rol 
             }, 
             mi_key,
             { expiresIn: '12h' }
         );
 
-        return res.status(200).cookie(mi_key, token, { maxAge: 3600000, httpOnly: true, secure: true });
+        const clearUser = {
+            name: newUser.user.name, 
+            email: newUser.user.email,
+            token
+        };
+
+        return res.status(200).json({ clearUser });
         /* Si esta API estuviera directamente conectada a un front-end, se podría utilizar una cookie,
             en este caso se utiliza una respuesta JSON porque es un API de prueba
 
@@ -45,6 +50,7 @@ router.post("/register", async (req, res) => {
     
     } catch (error) {
         console.error("Error al crear el usuario:", error);
+        errorHandler.routerError("POST /register", error);
         return res.status(500).json({
             error: 'Internal server error',
             message: 'Hubo un problema al registrar el usuario'
@@ -52,31 +58,23 @@ router.post("/register", async (req, res) => {
     }
 
 })
-//Login - OK
+//Login - Testeado ✅
 router.post("/login", async (req, res) => {
-    const {email, password} = req.body; 
-
+    const {email, password} = req.body;
     try {
         //El controlador hace las validaciones necesarias y retorna un objeto con el usuario o un error
-        const user = await usersManager.loginUser(email, password);
+        const user = await usersManager.loginUser({email, password, user: "user"});
 
         if (!user.status) {
             return res.status(400).json({ error: user.error, message: user.message });
         }
-
-        /** Como implemenatría sesions como otro método de autenticación
-            req.session.login = true;
-            req.session.user = { ...user.user._doc };
-
-            return res.status(200).json({ message: "Usuario creado con éxito" }); 
-        */
 
         const mi_key = process.env.SECRET_KEY;
 
         const token = jwt.sign(
             { 
                 usuario: user.user.usuario, 
-                rol: user.user.rol 
+                rol: user.user.role
             }, 
             mi_key,
             { expiresIn: '12h' }
@@ -93,13 +91,14 @@ router.post("/login", async (req, res) => {
 
     } catch (error) {
         console.error("Error al loguear el usuario:", error);
+        errorHandler.routerError("POST /login", error);
         return res.status(500).json({
             error: 'Internal server error',
             message: 'Hubo un problema al loguear el usuario'
         });
     }
 })
-//Logout - testing
+//Logout - haciendo 🔨
 router.post("/logout", (req, res) => {
     //Voy a limpiar la cookie del Token
     res.clearCookie("inventaryCookieToken"); 
@@ -109,45 +108,43 @@ router.post("/logout", (req, res) => {
 
 //Rutas Admin: 
 
-//login Admin: testing
+//login Admin: haciendo 🔨
 router.post("/loginAdmin", async (req, res) => {
-    const {usuario, password} = req.body; 
+    const {email, password} = req.body; 
 
     try {
         //El controlador hace las validaciones necesarias y retorna un objeto con el usuario o un error
-        const user = await usersManager.loginUser(usuario, password);
+        const user = await usersManager.loginUser({email, password, role: "admin"});
 
         if (!user.status) {
             return res.status(400).json({ error: user.error, message: user.message });
         }
-
-        if (user.rol !== "admin") {
-            return res.status(403).send("Acceso Denegado");
+        if (user.user.role !== "admin") {
+            return res.status(403).json({ error: "Forbidden", message: "Acceso denegado" });
         }
 
-        //Tanto en la cookie como en el token, se debería utilizar una variable de entorno
-        //    en este caso no se utiliza por simplicidad
-        const token = jwt.sign(
-            { 
-                usuario: user.user.usuario, 
-                rol: user.user.rol 
-            }, 
-            "inventaryCookieToken",
-            { expiresIn: '12h' }
-        );
+        const clearUser = {
+            name: user.user.name, 
+            email: user.user.email,
+            role: user.user.role
+        };
 
-        res.cookie("inventaryCookieToken", token, { maxAge: 3600000, httpOnly: true, secure: true });
+        //Autenticamos con sessions
+        req.session.login = true;
+        req.session.user = clearUser;
+
+        return res.status(200).json({ message: "Usuario admin logueado con éxito" }); 
 
     } catch (error) {
         console.error("Error al loguear el usuario:", error);
+        errorHandler.routerError("POST /loginAdmin", error);
         return res.status(500).json({
             error: 'Internal server error',
             message: 'Hubo un problema al loguear el usuario'
         });
     }
 })
-
-//Ver usuarios: testing
+//Ver usuarios: haciendo 🔨
 router.get("/getUsers", passport.authenticate("jwt", {session: false}), (req, res) => {
     console.log(req.user);
     if ( req.user.rol !== "admin") {

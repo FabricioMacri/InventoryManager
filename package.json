@@ -3,6 +3,12 @@
   "version": "1.0.0",
   "description": "",
   "main": "./src/app.js",
+  "devDependencies": {
+    "@eslint/js": "^9.20.0",
+    "eslint": "^8.57.1",
+    "globals": "^15.14.0",
+    "standard": "*"
+  },
   "scripts": {
     "test": "mocha",
     "dev": "nodemon ./src/app.js"

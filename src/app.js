@@ -1,6 +1,5 @@
 // Imports:
 const express = require('express');
-const mongoose = require('mongoose');
 const exphbs = require("express-handlebars");
 const cors = require("cors");
 const cookieParser = require('cookie-parser');
@@ -57,7 +56,7 @@ app.use("/client", clientRouter);
 app.use("/users", usersRouter);
 
 // Listener
-const httpServer = app.listen(PUERTO, () => {
+app.listen(PUERTO, () => {
 
     console.log('Escuchando puerto: ' + PUERTO);
 })

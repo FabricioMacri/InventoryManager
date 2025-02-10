@@ -40,7 +40,6 @@ router.post('/newInventory', async (req, res) => {
         });
     }
 });
-
 //Obtener todos los inventarios - Testeado ✅
 router.post('/getInventorys', async (req, res) => {
     const { email, name } = req.body;
@@ -69,7 +68,6 @@ router.post('/getInventorys', async (req, res) => {
         });
     }
 });
-
 //Agregar item - Testeado ✅
 router.post('/addItem', async (req, res) => {
     const { email, inventoryName, name, description, price, code, stock, category, subCategory, thumbnail } = req.body;
@@ -101,7 +99,6 @@ router.post('/addItem', async (req, res) => {
         });
     }
 });
-
 //Obtener inventario - Testeado ✅
 router.post('/getItems', async (req, res) => {
 
@@ -129,7 +126,6 @@ router.post('/getItems', async (req, res) => {
         });
     }
 });
-
 //Obtener item por ID - Testeado ✅
 router.post('/getItemByCode', async (req, res) => {
     try {
@@ -182,7 +178,7 @@ router.put('/updateItem', async (req, res) => {
         });
     }
 });
-//Eliminar item - haciendo 🔨
+//Eliminar item Testeado ✅
 router.delete('/deleteItem', async (req, res) => {
     try {
         const token = req.headers.authorization.split(" ")[1];
@@ -208,6 +204,5 @@ router.delete('/deleteItem', async (req, res) => {
         });
     }
 });
-
 
 module.exports = router;
