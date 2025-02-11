@@ -1,7 +1,6 @@
 //Librerias
 const express = require("express");
 const jwt = require('jsonwebtoken');
-const passport = require('passport');
 const router = express.Router();
 //Handlers
 const errorHandler = require("../utils/validatorHandler.js");
@@ -25,8 +24,7 @@ router.post("/register", async (req, res) => {
 
         const token = jwt.sign(
             { 
-                usuario: newUser.user.usuario, 
-                rol: newUser.user.rol 
+                email: newUser.user.usuario
             }, 
             mi_key,
             { expiresIn: '12h' }
@@ -63,7 +61,7 @@ router.post("/login", async (req, res) => {
     const {email, password} = req.body;
     try {
         //El controlador hace las validaciones necesarias y retorna un objeto con el usuario o un error
-        const user = await usersManager.loginUser({email, password, user: "user"});
+        const user = await usersManager.loginUser({email, password, role: "user"});
 
         if (!user.status) {
             return res.status(400).json({ error: user.error, message: user.message });
@@ -73,8 +71,7 @@ router.post("/login", async (req, res) => {
 
         const token = jwt.sign(
             { 
-                usuario: user.user.usuario, 
-                rol: user.user.role
+                email: user.user.email
             }, 
             mi_key,
             { expiresIn: '12h' }
@@ -108,7 +105,7 @@ router.post("/logout", (req, res) => {
 
 //Rutas Admin: 
 
-//login Admin: haciendo 🔨
+//login Admin: Testeado ✅
 router.post("/loginAdmin", async (req, res) => {
     const {email, password} = req.body; 
 
@@ -144,16 +141,27 @@ router.post("/loginAdmin", async (req, res) => {
         });
     }
 })
-//Ver usuarios: haciendo 🔨
-router.get("/getUsers", passport.authenticate("jwt", {session: false}), (req, res) => {
-    console.log(req.user);
-    if ( req.user.rol !== "admin") {
-        return res.status(403).send("Acceso Denegado");
+//Ver usuarios: Testeado ✅
+router.post("/getUsers", async (req, res) => {
+    try {
+        if(!req.session.login) {
+            return res.status(403).json({ error: "Forbidden", message: "Acceso denegado" });
+        }
+        const users = await usersManager.getUsers(req.body.email);
+
+        if (!users.status) {
+            return res.status(400).json({ error: users.error, message: users.message });
+        }
+
+        return res.status(200).json({ users: users.users });
+    } catch (error) {
+        console.error("Error al obtener los usuarios:", error);
+        errorHandler.routerError("GET /getUsers", error);
+        return res.status(500).json({
+            error: 'Internal server error',
+            message: 'Hubo un problema al obtener los usuarios'
+        });
     }
-    //Si el usuario es admin, mostrar el panel correspondiente: 
-    res.render("admin");
-})
-
-
+});
 
 module.exports = router;

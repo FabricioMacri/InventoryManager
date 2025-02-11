@@ -46,7 +46,7 @@ app.post("/testing", (req, res) => {
             return res.status(400).json({ error: decoded.error, message: decoded.message });
         }
 
-        return res.status(200).json({ message: "Token válido", user: decoded.user });
+        return res.status(200).json({ message: "Token válido", user: decoded });
     } catch (error) {
         console.log("Error en la ruta testing", error);
         return res.status(500).send("Internal server error");

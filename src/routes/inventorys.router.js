@@ -14,13 +14,20 @@ const JWTValidator = require("../services/tokenValidator.js");
 
 //Nuevo inventario - Testeado ✅
 router.post('/newInventory', async (req, res) => {
-    const { email, name } = req.body;
 
     try {
+        if(!req.body.email) {
+            return res.status(400).json({ error: "Bad request", message: "Faltan datos" });
+        }
+        const { email, name } = req.body;
+
         const token = req.headers.authorization.split(" ")[1];
         const decoded = JWTValidator(token);
         if(!decoded.status) {
             return res.status(400).json({ error: decoded.error, message: decoded.message });
+        }
+        if(decoded.data.email !== email) {
+            return res.status(403).json({ error: "Forbidden", message: "Acceso denegado, el token no le pertenece a este usuario" });
         }
 
         const newInventory = await InventoryManager.newInventory(email, name);
@@ -42,13 +49,20 @@ router.post('/newInventory', async (req, res) => {
 });
 //Obtener todos los inventarios - Testeado ✅
 router.post('/getInventorys', async (req, res) => {
-    const { email, name } = req.body;
 
     try {
+        if(!req.body.email) {
+            return res.status(400).json({ error: "Bad request", message: "Faltan datos" });
+        }
+        const { email, name } = req.body;
+
         const token = req.headers.authorization.split(" ")[1];
         const decoded = JWTValidator(token);
         if(!decoded.status) {
             return res.status(400).json({ error: decoded.error, message: decoded.message });
+        }
+        if(decoded.data.email !== email) {
+            return res.status(403).json({ error: "Forbidden", message: "Acceso denegado, el token no le pertenece a este usuario" });
         }
 
         const inventory = await InventoryManager.getAllInventories(email, name);
@@ -69,20 +83,23 @@ router.post('/getInventorys', async (req, res) => {
     }
 });
 //Agregar item - Testeado ✅
-router.post('/addItem', async (req, res) => {
-    const { email, inventoryName, name, description, price, code, stock, category, subCategory, thumbnail } = req.body;
+router.post('/addItems', async (req, res) => {
 
     try {
+        if(!req.body.email) {
+            return res.status(400).json({ error: "Bad request", message: "Faltan datos" });
+        }
 
         const token = req.headers.authorization.split(" ")[1];
         const decoded = JWTValidator(token);
         if(!decoded.status) {
             return res.status(400).json({ error: decoded.error, message: decoded.message });
         }
+        if(decoded.data.email !== req.body.email) {
+            return res.status(403).json({ error: "Forbidden", message: "Acceso denegado, el token no le pertenece a este usuario" });
+        }
         
-        const newProduct = await InventoryManager.addItem(
-            { email, inventoryName, name, description, price, code, stock, category, subCategory, thumbnail }
-        );
+        const newProduct = await InventoryManager.addItems(req.body);
 
         if(!newProduct.status) {
             return res.status(400).json({ error: newProduct.error, message: newProduct.message });
@@ -103,10 +120,16 @@ router.post('/addItem', async (req, res) => {
 router.post('/getItems', async (req, res) => {
 
     try {
+        if(!req.body.email) {
+            return res.status(400).json({ error: "Bad request", message: "Faltan datos" });
+        }
         const token = req.headers.authorization.split(" ")[1];
         const decoded = JWTValidator(token);
         if(!decoded.status) {
             return res.status(400).json({ error: decoded.error, message: decoded.message });
+        }
+        if(decoded.data.email !== req.body.email) {
+            return res.status(403).json({ error: "Forbidden", message: "Acceso denegado, el token no le pertenece a este usuario" });
         }
 
         const inventory = await InventoryManager.getItems(req.body);
@@ -129,10 +152,17 @@ router.post('/getItems', async (req, res) => {
 //Obtener item por ID - Testeado ✅
 router.post('/getItemByCode', async (req, res) => {
     try {
+        if(!req.body.email) {
+            return res.status(400).json({ error: "Bad request", message: "Faltan datos" });
+        }
+
         const token = req.headers.authorization.split(" ")[1];
         const decoded = JWTValidator(token);
         if(!decoded.status) {
             return res.status(400).json({ error: decoded.error, message: decoded.message });
+        }
+        if(decoded.data.email !== req.body.email) {
+            return res.status(403).json({ error: "Forbidden", message: "Acceso denegado, el token no le pertenece a este usuario" });
         }
 
         const item = await InventoryManager.getItemByCode(req.body);
@@ -155,10 +185,17 @@ router.post('/getItemByCode', async (req, res) => {
 router.put('/updateItem', async (req, res) => {
 
     try {
+        if(!req.body.email) {
+            return res.status(400).json({ error: "Bad request", message: "Faltan datos" });
+        }
+
         const token = req.headers.authorization.split(" ")[1];
         const decoded = JWTValidator(token);
         if(!decoded.status) {
             return res.status(400).json({ error: decoded.error, message: decoded.message });
+        }
+        if(decoded.data.email !== req.body.email) {
+            return res.status(403).json({ error: "Forbidden", message: "Acceso denegado, el token no le pertenece a este usuario" });
         }
 
         const updatedProduct = await InventoryManager.updateProduct(req.body);
@@ -181,10 +218,17 @@ router.put('/updateItem', async (req, res) => {
 //Eliminar item Testeado ✅
 router.delete('/deleteItem', async (req, res) => {
     try {
+        if(!req.body.email) {
+            return res.status(400).json({ error: "Bad request", message: "Faltan datos" });
+        }
+
         const token = req.headers.authorization.split(" ")[1];
         const decoded = JWTValidator(token);
         if(!decoded.status) {
             return res.status(400).json({ error: decoded.error, message: decoded.message });
+        }
+        if(decoded.data.email !== req.body.email) {
+            return res.status(403).json({ error: "Forbidden", message: "Acceso denegado, el token no le pertenece a este usuario" });
         }
 
         const deletedProduct = await InventoryManager.deleteProduct(req.body);

@@ -43,10 +43,11 @@ class UsersManager {
 
         return { status: true, user: newUser };
     }
-    //OK - Falta testear
+    //OK - Testeado ✅
     async loginUser(props) {
         try {
             const { email, password, role } = props;
+            console.log(role)
             if (!email || !password) {
                 return {
                     code: 400,
@@ -74,6 +75,7 @@ class UsersManager {
                     status: false
                 };
             }
+            console.log(existingUser.role, role);
             if(existingUser.role !== role){
                 return {
                     code: 403,
@@ -95,30 +97,13 @@ class UsersManager {
             }
         }
     }
-
-    //OK - Falta testear
-    async getUsers(email, password, token) {
+    //OK - Testeado ✅
+    async getUsers(email) {
         try {
-            const flag = await this.loginUser(email, password);
 
-            if(!flag.status){
-                return {
-                    code: flag.code,
-                    error: flag.error,
-                    message: flag.message,
-                    status: false
-                };
-            }
-            if(token !== process.env.ADMIN_TOKEN || flag.user.role !== 'admin'){
-                return {
-                    code: 403,
-                    error: 'Unauthorized',
-                    message: 'No tienes permisos para realizar esta acción',
-                    status: false
-                };
-            }
+            const users = email ? await UsersModel.find({email : email}) : await UsersModel.find();
 
-            const users = await UsersModel.find();
+            console.log(users);
 
             return { status: true, users: users };
 

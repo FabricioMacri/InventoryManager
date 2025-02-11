@@ -60,7 +60,6 @@ class ProductManager {
                 };
             }
 
-            console.log(name);
             const inventory = await this.getInventory(email, name);
 
             if (inventory.status) {
@@ -94,19 +93,11 @@ class ProductManager {
         }
     }
     //OK - Testeado ✅
-    async addItem(props) {
+    async addItems(props) {
         try {
-            const { email, inventoryName, name, description, price, code, stock, category, subCategory, thumbnail } = props;
-            if (!name || !price || !code || !category) {
-                return {
-                    error: 'Invalid request',
-                    message: 'Uno o más de los campos obligatorios no fue enviado',
-                    status: false
-                };
-            }
+            const { email, inventoryName, list } = props;
 
             const SelectedInventory = await this.getInventory(email, inventoryName);
-
             if(!SelectedInventory.status){
                 return {
                     error: SelectedInventory.error,
@@ -115,30 +106,43 @@ class ProductManager {
                 };
             }
 
-            const product = SelectedInventory.inventory.items.some(product => product.code === code);
-
-            if (product) {
-                return {
-                    error: 'Invalid request',
-                    message: 'El código de producto ya existe',
-                    status: false
-                };
+            //Reviso que no haya ningun tipo de error en la lista antes de agregarla
+            const listHandler = {
+                error: '',
+                message: '',
+                status: true
             }
+            list.forEach(item => {
+                if (!item.name || !item.price || !item.code || !item.category) {
+                    listHandler.error = "Invalid request";
+                    listHandler.message = "La lista enviada tiene items con campos obligatorios vacios.";
+                    listHandler.status = false;
+                }
+                const flag = SelectedInventory.inventory.items.some(el => el.code === item.code);
+                if(flag){
+                    listHandler.error = 'Invalid request';
+                    listHandler.message = `El código: ${item.code} ya existe, la lista no se agregara al inventario.`;
+                    listHandler.status = false;
+                }
+            });
+            if(!listHandler.status){ return listHandler }
 
-            const newProduct = {
-                name,
-                description: description || '',
-                price,
-                code,
-                stock: stock|| 0,
-                category,
-                subCategory: subCategory|| '',
-                status: stock ? true : false,
-                thumbnail: thumbnail || []
-            };
+            list.forEach(async item => {
+                
+                const newProduct = {
+                    name: item.name,
+                    description: item.description || '',
+                    price: item.price,
+                    code: item.code,
+                    stock: item.stock|| 0,
+                    category: item.category,
+                    subCategory: item.subCategory|| '',
+                    status: item.stock ? true : false,
+                    thumbnail: item.thumbnail || []
+                };
 
-            SelectedInventory.inventory.items.push(newProduct);
-
+                SelectedInventory.inventory.items.push(newProduct);
+            });
             await SelectedInventory.inventory.save();
 
             return {

@@ -42,6 +42,19 @@
 -password: Superadmin1234+
 -Token: aB8@#jK2Lm9&$pQr5StZx^W1
 
+# Usuarios de prueba:
+
+{
+    "name": "Metalurgica Progress S.A",
+    "email": "gestion@progress.com",
+    "password": "metalurgicaprogress123"
+},
+{
+    "name": "Ferretería Gonzales",
+    "email": "ferreteriagonzalez@gmail.com",
+    "password": "ferreteriagonzalez123"
+}
+
 # NOTAS:
 -El registro posee un método de autenticación diferente al de login, esto es únicamente para mostrar
     el uso de estos distintos métodos.

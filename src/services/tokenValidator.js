@@ -14,7 +14,7 @@ function validateJWT(token) {
         }
         const decoded = jwt.verify(token, secretKey);
 
-        if(decoded.iat) return { status: true };
+        if(decoded.iat) return { status: true, data: decoded };
     } catch (error) {
         console.log(error);
         return {
