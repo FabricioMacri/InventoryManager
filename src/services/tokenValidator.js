@@ -7,8 +7,9 @@ function validateJWT(token) {
         const secretKey = process.env.SECRET_KEY;
         if(!token) {
             return {
-                error: 'Invalid token',
-                message: 'Token no enviado',
+                code: 401,
+                error: 'Unauthorized',
+                message: 'Invalid token',
                 status: false
             }
         }
@@ -18,8 +19,9 @@ function validateJWT(token) {
     } catch (error) {
         console.log(error);
         return {
-            error: 'Invalid token',
-            message: 'El token es inválido',
+            code: 401,
+            error: 'Unauthorized',
+            message: 'Invalid token',
             status: false
         };
     }

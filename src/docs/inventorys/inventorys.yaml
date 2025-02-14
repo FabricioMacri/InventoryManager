@@ -1,0 +1,69 @@
+paths:
+  /clients/newInventory:
+    post:
+      tags:
+      - Nuevo Inventario
+      summary: Crea un nuevo inventario.
+      parameters:
+      - $ref: '#/components/parameters/token'
+      requestBody:
+        content:
+          aplication/json:
+            schema:
+              $ref: '#/components/schemas/bodyUsersPost'
+        required: true
+      responses:
+        200:
+          description: (OK) Inventario creado con éxito
+          content:
+            aplication/json:
+              schema:
+                $ref: '#/components/schemas/exitoNewInventory'
+        400:
+          $ref: '#/components/responses/badRequest'
+        403:
+          $ref: '#/components/responses/Forbidden'
+        409:
+          $ref: '#/components/responses/Conflict'
+        500:
+          $ref: '#/components/responses/serverError'
+
+components:
+  responses:
+    Forbidden:
+      description: (Forbidden) Acceso denegado, las credenciales enviadas no son válidas.
+    Unauthorized:
+      description: (Unauthorized) No posee las credenciales necesarias para esta petición.
+    badRequest:
+      description: (Bad Request) Faltan parametros en la petición.
+    Conflict:
+      description: (Conflict) Ya existe un recurso con ese valor.
+    serverError:
+      description: (Internal Server Error) Hubo un problema con el servidor al procesar la petición.
+    
+  schemas:
+    bodyUsersPost:
+      type: object
+      properties:
+        email:
+          type: string
+          description: Email del usuario.
+        name:
+          type: string
+          description: Nombre del nuevo inventario
+
+    exitoNewInventory:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Mensaje de éxito.
+
+  parameters:
+    token:
+      in: header
+      name: token
+      description: Token de autenticación.
+      required: true
+      schema:
+        type: string

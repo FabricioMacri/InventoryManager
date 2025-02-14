@@ -54,8 +54,9 @@ class ProductManager {
 
             if (!email || !name) {
                 return {
-                    error: 'Invalid request',
-                    message: 'El usuario o el nombre del inventario no fueron enviado',
+                    code: 400,
+                    error: 'Bad Request',
+                    message: 'El usuario o el nombre del inventario no fueron enviados',
                     status: false
                 };
             }
@@ -64,7 +65,8 @@ class ProductManager {
 
             if (inventory.status) {
                 return {
-                    error: 'Invalid request',
+                    code: 409,
+                    error: 'Conflict',
                     message: 'Ya tienes un inventario con ese nombre',
                     status: false
                 };
@@ -223,6 +225,7 @@ class ProductManager {
 
             if (!email) {
                 return {
+                    code: 400,
                     error: 'Invalid request',
                     message: 'El usuario no fue enviado',
                     status: false
@@ -233,7 +236,8 @@ class ProductManager {
 
             if (!inventorys) {
                 return {
-                    error: 'Invalid request',
+                    code: 404,
+                    error: 'Not Found',
                     message: 'No se encontraron inventarios',
                     status: false
                 };
@@ -246,6 +250,12 @@ class ProductManager {
         } catch (error) {
             console.log("Error al buscar inventarios", error);
             errorHanlder.controllerError('ProductManager - getAllInventories', error);
+            return {
+                code: 500,
+                error: 'Internal server error',
+                message: 'Hubo un problema al obtener el inventario.',
+                status: false
+            };
         }
     }
     //OK - Testado ✅

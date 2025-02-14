@@ -17,6 +17,8 @@ También tiene usuarios admin que tienen acceso solo de lectura a todos los inve
 En este proyecto se busca mostrar el desarrollo backend con NodeJS, se utilizan diversas tecnologías
     para que sea una API robusta y escalable, desde sus diferentes despliegues, la autenticación,
     y los controladores hasta el uso del ORM y la base de datos para almacenar y procesar la informacíon
+Por último también cuenta con un manipulador de errores que me permite encontrar y entender mas
+    facilmente los errores para poder dar un seguimiento y mantenimiento mas sencillo y efectivo.
 
 # PROCESO:
 

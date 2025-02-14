@@ -33,7 +33,7 @@ router.post('/newInventory', async (req, res) => {
         const newInventory = await InventoryManager.newInventory(email, name);
 
         if(!newInventory.status) {
-            return res.status(400).json({ error: newInventory.error, message: newInventory.message });
+            return res.status(newInventory.code).json({ error: newInventory.error, message: newInventory.message });
         }
 
         return res.status(200).json({ message: 'Inventario creado con éxito' });
@@ -59,7 +59,7 @@ router.post('/getInventorys', async (req, res) => {
         const token = req.headers.authorization.split(" ")[1];
         const decoded = JWTValidator(token);
         if(!decoded.status) {
-            return res.status(400).json({ error: decoded.error, message: decoded.message });
+            return res.status(decoded.code).json({ error: decoded.error, message: decoded.message });
         }
         if(decoded.data.email !== email) {
             return res.status(403).json({ error: "Forbidden", message: "Acceso denegado, el token no le pertenece a este usuario" });
@@ -68,7 +68,7 @@ router.post('/getInventorys', async (req, res) => {
         const inventory = await InventoryManager.getAllInventories(email, name);
 
         if(!inventory.status) {
-            return res.status(400).json({ error: inventory.error, message: inventory.message });
+            return res.status(inventory.code).json({ error: inventory.error, message: inventory.message });
         }
 
         return res.status(200).json({ inventory });

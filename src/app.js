@@ -5,6 +5,8 @@ const cors = require("cors");
 const cookieParser = require('cookie-parser');
 const passport = require('passport');
 const session = require("express-session");
+const swaggerJSDoc = require('swagger-jsdoc');
+const swaggerUiExpress = require('swagger-ui-express');
 
 //Import modules: 
 const clientRouter = require('./routes/inventorys.router.js');
@@ -33,6 +35,20 @@ app.engine("handlebars", exphbs.engine());
 app.set("view engine", "handlebars");
 app.set("views", "./src/views");
 
+//Docs
+const swaggerOptions = {
+    definition:{
+        openapi: '3.0.3',
+        info:{
+            title: "API Manager de inventarios",
+            description: "Esta API busca que sus usuarios puedan almacenar su invantario de una manera sectorizada y ordenada para poder hacer consultas avanzadas, carga de items con facilicada y rapidez, control de los items, actualizaciones globales y puntuales y un sistema de notificaciones cuando un producto se acaba.",
+            version: '1.0.0'
+        }
+    },
+    apis:[`${__dirname}/docs/**/*.yaml`]
+}
+const specs = swaggerJSDoc(swaggerOptions);
+app.use('/docs', swaggerUiExpress.serve, swaggerUiExpress.setup(specs));
 
 // Routes
 app.post("/testing", (req, res) => {
