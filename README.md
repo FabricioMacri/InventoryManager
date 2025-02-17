@@ -11,9 +11,8 @@
 **Descripción**:
 Esta API busca que sus usuarios puedan almacenar su invantario de una manera sectorizada y ordenada
     para poder hacer consultas avanzadas, carga de items con facilicada y rapidez, control de los items,
-    actualizaciones globales y puntuales y un sistema de notificaciones cuando un producto se acaba.
-También tiene usuarios admin que tienen acceso solo de lectura a todos los inventarios para poder hacer
-    métricas globales y para gestionar los usuarios.
+    actualizaciones globales y puntuales.
+También tiene usuarios admin que sirven para gestionar a los usuarios.
 En este proyecto se busca mostrar el desarrollo backend con NodeJS, se utilizan diversas tecnologías
     para que sea una API robusta y escalable, desde sus diferentes despliegues, la autenticación,
     y los controladores hasta el uso del ORM y la base de datos para almacenar y procesar la informacíon

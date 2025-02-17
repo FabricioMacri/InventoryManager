@@ -15,6 +15,7 @@ class ProductManager {
 
             if (!email || !name) {
                 return {
+                    code: 400,
                     error: 'Invalid request',
                     message: 'El usuario o el nombre del inventario no fueron enviado',
                     status: false
@@ -28,7 +29,8 @@ class ProductManager {
 
             if (!inventory) {
                 return {
-                    error: 'Invalid request',
+                    code: 404,
+                    error: 'Not Found',
                     message: 'No se encontro el inventario',
                     status: false
                 };
@@ -164,7 +166,10 @@ class ProductManager {
     //OK - Testeado ✅
     async getItems(props) {
         try {
-            const { email, inventoryName, available, category, alfabetic } = props;
+            const { 
+                email, inventoryName, available, category, alfabetic, 
+                stock, expensive, search, stockList, priceRange
+            } = props;
             const selectedInventory = await this.getInventory(email, inventoryName);
 
             if(!selectedInventory.status){
@@ -187,27 +192,68 @@ class ProductManager {
                 items: clearItems
             }
 
+            const sortByCategory = () => {
+                const categorizedItems = clearItems.reduce((acc, item) => {
+                  const category = item.category;
+                  if (!acc[category]) {
+                    acc[category] = [];
+                  }
+                  acc[category].push(item);
+                  return acc;
+                }, {});
+              
+                return Object.keys(categorizedItems).map(category => ({
+                  name: category,
+                  items: categorizedItems[category]
+                }));
+              };
             if (available) {
                 const availableItems = clearItems.filter(item => item.status === true);
                 response.items = availableItems;
             }
             if (category) {
-                const categorizedItems = clearItems.reduce((acc, item) => {
-                    if (!acc[item.category]) {
-                        acc[item.category] = [];
-                    }
-                    acc[item.category].push(item);
-                    return acc;
-                }, {});
-                response.items = categorizedItems;
+                response.items = sortByCategory();
             }
             if (alfabetic) {
                 const alfabeticItems = clearItems.sort((a, b) => a.name.localeCompare(b.name));
                 response.items = alfabeticItems;
             }
+            if(stock && stock > 0) {
+                const availableItems = clearItems.filter(item => item.stock > stock);
+                response.items = availableItems;
+            }
+            if(expensive) {
+                response.items = sortByCategory().map(sublist => {
+                    if (Array.isArray(sublist)) {
+                      return sublist.sort((a, b) => b.price - a.price);
+                    }
+                });
+            }
+            if(stockList) {
+                response.items = sortByCategory().map(sublist => {
+                    if (Array.isArray(sublist.items)) {
+                      return sublist.items.map(product => ({
+                        name: product.name,
+                        stock: product.stock
+                      }));
+                    } else {
+                      return [];
+                    }
+                  });
+                  
+            }
+            if(priceRange) {
+                response.items = clearItems.filter(
+                    product => product.price >= priceRange.min && product.price <= priceRange.max
+                );
+            }
+            if(search){
+                response.items = clearItems.filter(
+                    product => product.name.toLowerCase().includes(search)
+                )
+            }
 
             return response;
-
 
         } catch (error) {
             errorHanlder.controllerError('ProductManager - getItems', error);
@@ -257,6 +303,43 @@ class ProductManager {
                 status: false
             };
         }
+    }
+    //OK - Testeado ✅
+    async deleteAllInventories(email) {
+        if(!email) return {
+            code: 400,
+            error: 'Invalid request',
+            message: 'Uno o más de los campos obligatorios no fue enviado',
+            status: false
+        };
+
+        const inventoriesList = await InventorytModel.deleteMany({email:email});
+
+        return { status:true, inventories: inventoriesList}
+    }
+    //OK - Testeado ✅
+    async deletInventory(email, name) {
+        if(!email || !name) return {
+            code: 400,
+            error: 'Invalid request',
+            message: 'Uno o más de los campos obligatorios no fue enviado',
+            status: false
+        };
+
+        const inventory = await this.getInventory(email, name);
+
+        if (inventory) {
+            const result = await InventorytModel.deleteOne({ _id: inventory._id });
+            return { status: true, user: result };
+        } else {
+            return {
+                code: inventory.code,
+                error: inventory.error,
+                message: inventory.message,
+                status: false
+            };
+        }
+
     }
     //OK - Testado ✅
     async getItemByCode(props) {

@@ -15,7 +15,7 @@ const usersRouter = require('./routes/user.router.js');
 // Server, puerto y conexion a la BD
 const app = express();
 const PUERTO = 8080;
-require("./database.js");
+require("./services/database.js");
 
 // Middlewares:
 app.use(express.json());

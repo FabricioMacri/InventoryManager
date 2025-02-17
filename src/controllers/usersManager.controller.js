@@ -47,7 +47,6 @@ class UsersManager {
     async loginUser(props) {
         try {
             const { email, password, role } = props;
-            console.log(role)
             if (!email || !password) {
                 return {
                     code: 400,
@@ -75,7 +74,6 @@ class UsersManager {
                     status: false
                 };
             }
-            console.log(existingUser.role, role);
             if(existingUser.role !== role){
                 return {
                     code: 403,
@@ -113,6 +111,30 @@ class UsersManager {
             return {
                 error: 'Internal server error',
                 message: 'Hubo un problema al obtener los usuarios',
+                status: false
+            };
+        }
+    }
+    //OK - Testeado ✅
+    async deleteUser(email) {
+
+        if(!email) return {
+            code: 400,
+            error: 'Invalid request',
+            message: 'Uno o más de los campos obligatorios no fue enviado',
+            status: false
+        };
+
+        const user = await UsersModel.findOne({ email : email });
+        
+        if (user) {
+            const result = await UsersModel.deleteOne({ _id: user._id });
+            return { status: true, user: result };
+        } else {
+            return {
+                code: 404,
+                error: 'Not Found',
+                message: 'No se encontro un usuario con ese email.',
                 status: false
             };
         }

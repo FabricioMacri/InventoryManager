@@ -1,5 +1,5 @@
 const mongoose = require("mongoose"); 
-const configObject = require("./config/config.js");
+const configObject = require("../config/config.js");
 
 class BaseDatos {
     static #instancia; 

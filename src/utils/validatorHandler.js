@@ -39,7 +39,6 @@ class ValidatorHandler {
         this.location = location;
         this.message = error;
 
-        this.errorNotification();
     }
 
     async controllerError(location, error) {

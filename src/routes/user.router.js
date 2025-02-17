@@ -3,9 +3,14 @@ const express = require("express");
 const jwt = require('jsonwebtoken');
 const router = express.Router();
 //Handlers
-const errorHandler = require("../utils/validatorHandler.js");
+const ErrorHandler = require("../utils/validatorHandler.js");
+const errorHandler = new ErrorHandler();
+
 const UsersManager = require("../controllers/usersManager.controller.js");
 const usersManager = new UsersManager();
+
+const InventoryManager = require('../controllers/inventoryManager.controller.js');
+const inventoryManager = new InventoryManager();
 
 //Rutas user:
 
@@ -95,13 +100,6 @@ router.post("/login", async (req, res) => {
         });
     }
 })
-//Logout - haciendo 🔨
-router.post("/logout", (req, res) => {
-    //Voy a limpiar la cookie del Token
-    res.clearCookie("inventaryCookieToken"); 
-    
-    return res.status(200).json({mensaje: "Sesión cerrada con éxito"});
-})
 
 //Rutas Admin: 
 
@@ -141,6 +139,13 @@ router.post("/loginAdmin", async (req, res) => {
         });
     }
 })
+//Logout: Testeado ✅
+router.post("/logout", (req, res) => {
+    
+    req.session.destroy();
+    
+    return res.status(200).json({mensaje: "Sesión cerrada con éxito"});
+})
 //Ver usuarios: Testeado ✅
 router.post("/getUsers", async (req, res) => {
     try {
@@ -156,12 +161,42 @@ router.post("/getUsers", async (req, res) => {
         return res.status(200).json({ users: users.users });
     } catch (error) {
         console.error("Error al obtener los usuarios:", error);
-        errorHandler.routerError("GET /getUsers", error);
+        errorHandler.routerError(" /getUsers", error);
         return res.status(500).json({
             error: 'Internal server error',
             message: 'Hubo un problema al obtener los usuarios'
         });
     }
 });
+//Eliminar un usuario: Testeado ✅
+router.post("/deleteUser", async (req, res) => {
+
+    try {
+        if(!req.session.login) {
+            return res.status(403).json({ error: "Forbidden", message: "Acceso denegado" });
+        }
+        const result = await usersManager.deleteUser(req.body.email);
+
+        if (!result.status) {
+            return res.status(result.code).json({ error: result.error, message: result.message });
+        }
+        
+        const inventorysList = await inventoryManager.deleteAllInventories(req.body.email);
+
+        if(!inventorysList.status) {
+            return res.status(inventorysList.code).json({ error: inventorysList.error, message: inventorysList.message });
+        }
+
+        return res.status(200).json({result, inventorysList});
+
+    } catch (error) {
+        console.error("Error al eliminar el usuario:", error);
+        errorHandler.routerError("/deleteUser", error);
+        return res.status(500).json({
+            error: 'Internal server error',
+            message: 'Hubo un problema al eliminar el usuario'
+        });
+    }
+})
 
 module.exports = router;
