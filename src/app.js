@@ -49,7 +49,9 @@ const swaggerOptions = {
 }
 const specs = swaggerJSDoc(swaggerOptions);
 app.use('/docs', swaggerUiExpress.serve, swaggerUiExpress.setup(specs));
-
+app.get('/', (req, res) => {
+    res.render('home');
+})
 // Routes
 app.post("/testing", (req, res) => {
     try {

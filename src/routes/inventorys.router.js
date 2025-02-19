@@ -102,7 +102,7 @@ router.post('/addItems', async (req, res) => {
         const newProduct = await InventoryManager.addItems(req.body);
 
         if(!newProduct.status) {
-            return res.status(400).json({ error: newProduct.error, message: newProduct.message });
+            return res.status(newProduct.code).json({ error: newProduct.error, message: newProduct.message });
         }
 
         return res.status(200).json({ message: 'Producto registrado con éxito' });

@@ -14,7 +14,7 @@ const inventoryManager = new InventoryManager();
 
 //Rutas user:
 
-//Register - Testeado ✅
+//Register - Testeado ✅ - DOCUMENTADO ❌
 router.post("/register", async (req, res) => {
     const { name, email, password } = req.body;
     try {
@@ -61,7 +61,7 @@ router.post("/register", async (req, res) => {
     }
 
 })
-//Login - Testeado ✅
+//Login - Testeado ✅ - DOCUMENTADO ❌
 router.post("/login", async (req, res) => {
     const {email, password} = req.body;
     try {
@@ -103,7 +103,7 @@ router.post("/login", async (req, res) => {
 
 //Rutas Admin: 
 
-//login Admin: Testeado ✅
+//login Admin: Testeado ✅ - DOCUMENTADO ❌
 router.post("/loginAdmin", async (req, res) => {
     const {email, password} = req.body; 
 
@@ -139,14 +139,14 @@ router.post("/loginAdmin", async (req, res) => {
         });
     }
 })
-//Logout: Testeado ✅
+//Logout: Testeado ✅ - DOCUMENTADO ❌
 router.post("/logout", (req, res) => {
     
     req.session.destroy();
     
     return res.status(200).json({mensaje: "Sesión cerrada con éxito"});
 })
-//Ver usuarios: Testeado ✅
+//Ver usuarios: Testeado ✅ - DOCUMENTADO ❌
 router.post("/getUsers", async (req, res) => {
     try {
         if(!req.session.login) {
@@ -168,7 +168,7 @@ router.post("/getUsers", async (req, res) => {
         });
     }
 });
-//Eliminar un usuario: Testeado ✅
+//Eliminar un usuario: Testeado ✅ - DOCUMENTADO ❌
 router.post("/deleteUser", async (req, res) => {
 
     try {

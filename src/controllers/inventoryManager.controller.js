@@ -8,7 +8,7 @@ const InventorytModel = require("../models/inventorys.model.js");
 
 class ProductManager {
 
-    //OK - Testeado ✅
+    //OK - Testeado ✅ - DOCUMENTADO ❌
     async getInventory(email, name) {
 
         try {
@@ -50,7 +50,7 @@ class ProductManager {
             };
         }
     }
-    //OK - Testeado ✅
+    //OK - Testeado ✅ - DOCUMENTADO ✅
     async newInventory(email, name) {
         try {
 
@@ -96,7 +96,7 @@ class ProductManager {
             };
         }
     }
-    //OK - Testeado ✅
+    //OK - Testeado ✅ - DOCUMENTADO ✅
     async addItems(props) {
         try {
             const { email, inventoryName, list } = props;
@@ -104,6 +104,7 @@ class ProductManager {
             const SelectedInventory = await this.getInventory(email, inventoryName);
             if(!SelectedInventory.status){
                 return {
+                    code: SelectedInventory.code,
                     error: SelectedInventory.error,
                     message: SelectedInventory.message,
                     status: false
@@ -163,7 +164,7 @@ class ProductManager {
             };
         }
     }
-    //OK - Testeado ✅
+    //OK - Testeado ✅ - DOCUMENTADO ❌
     async getItems(props) {
         try {
             const { 
@@ -265,7 +266,7 @@ class ProductManager {
             };
         }
     }
-    //OK - Testeado ✅
+    //OK - Testeado ✅ - DOCUMENTADO ❌
     async getAllInventories(email) {
         try {
 
@@ -304,7 +305,7 @@ class ProductManager {
             };
         }
     }
-    //OK - Testeado ✅
+    //OK - Testeado ✅ - DOCUMENTADO ❌
     async deleteAllInventories(email) {
         if(!email) return {
             code: 400,
@@ -317,7 +318,7 @@ class ProductManager {
 
         return { status:true, inventories: inventoriesList}
     }
-    //OK - Testeado ✅
+    //OK - Testeado ✅ - DOCUMENTADO ❌
     async deletInventory(email, name) {
         if(!email || !name) return {
             code: 400,
@@ -341,7 +342,7 @@ class ProductManager {
         }
 
     }
-    //OK - Testado ✅
+    //OK - Testado ✅ - DOCUMENTADO ❌
     async getItemByCode(props) {
         try {
             const { email, inventoryName, code } = props;
@@ -381,7 +382,7 @@ class ProductManager {
             };
         }
     }
-    //OK - Testeado ✅
+    //OK - Testeado ✅ - DOCUMENTADO ❌
     async updateProduct(props) {
         try {
             const { email, inventoryName, name, description, price, code, stock, category, subCategory, thumbnail } = props;
@@ -429,7 +430,7 @@ class ProductManager {
             };
         }
     }
-    //Revisar - Testeado ✅
+    //Revisar - Testeado ✅ - DOCUMENTADO ❌
     async deleteProduct(props) {
         try {
             const { email, inventoryName, code } = props;

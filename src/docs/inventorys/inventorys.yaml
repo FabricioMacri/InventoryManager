@@ -27,7 +27,45 @@ paths:
           $ref: '#/components/responses/Conflict'
         500:
           $ref: '#/components/responses/serverError'
-
+  clients/getInventorys:
+    post:
+      tags:
+      - Agregar Item
+      summary: Agrega un items a tus inventarios.
+      parameters:
+      - $ref: '#/components/parameters/token'
+      requestBody:
+        content:
+          aplication/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: Email del usuario.
+                inventoryName:
+                  type: string
+                  description: Nombre del inventario al que quieres agregar los items.
+                list:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Items'
+        required: true
+      responses:
+        200:
+          description: (OK) Items agregados con éxito.
+          content:
+            aplication/json:
+              schema:
+                $ref: '#/components/schemas/exitoNewInventory'
+        400:
+          $ref: '#/components/responses/badRequest'
+        403:
+          $ref: '#/components/responses/Forbidden'
+        409:
+          $ref: '#/components/responses/Conflict'
+        500:
+          $ref: '#/components/responses/serverError'
 components:
   responses:
     Forbidden:
@@ -42,6 +80,36 @@ components:
       description: (Internal Server Error) Hubo un problema con el servidor al procesar la petición.
     
   schemas:
+    Items:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Nombre del item.
+        description:
+          type: string
+          description: Descripción del item.
+        code:
+          type: string
+          description: Código del item.
+        price:
+          type: number
+          description: Precio del item.
+        status: 
+          type: boolean
+          description: Estado del item.
+        stock:
+          type: number
+          description: Stock del item.
+        category:
+          type: string
+          description: Categoría del item.
+        subCategory:
+          type: string
+          description: Categoría del item.
+        thumbnail:
+          type: string
+          description: URL de la imagen del item.
     bodyUsersPost:
       type: object
       properties:
