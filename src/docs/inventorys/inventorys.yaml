@@ -30,6 +30,56 @@ paths:
   clients/getInventorys:
     post:
       tags:
+      - Obtener inventarios
+      summary: Obten todos los inventarios vinculados a tu cuenta
+      parameters:
+      - $ref: '#/components/parameters/token'
+      requestBody:
+        content:
+          aplication/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: Email del usuario.
+        required: true
+      responses:
+        200:
+          description: (OK) Solicitud procesada correctamente.
+          content:
+            aplication/json:
+              schema:
+                type: array
+                description: Lista con todos los inventarios
+                properties:
+                  inventory:
+                    type: object
+                    description: Inventario con sus respectivos items
+                    properties:
+                      email:
+                        type: string
+                        description: Email del usuario.
+                      inventoryName:
+                        type: string
+                        description: Nombre del inventario al que quieres agregar los items.
+                      list:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Items'
+
+
+        400:
+          $ref: '#/components/responses/badRequest'
+        403:
+          $ref: '#/components/responses/Forbidden'
+        409:
+          $ref: '#/components/responses/Conflict'
+        500:
+          $ref: '#/components/responses/serverError'
+  /clients/addItems:
+    post:
+      tags:
       - Agregar Item
       summary: Agrega un items a tus inventarios.
       parameters:

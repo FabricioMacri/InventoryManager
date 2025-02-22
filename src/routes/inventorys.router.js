@@ -47,14 +47,14 @@ router.post('/newInventory', async (req, res) => {
         });
     }
 });
-//Obtener todos los inventarios - Testeado ✅ - DOCUMENTADO ❌
+//Obtener todos los inventarios - Testeado ✅ - DOCUMENTADO ✅ 
 router.post('/getInventorys', async (req, res) => {
 
     try {
         if(!req.body.email) {
             return res.status(400).json({ error: "Bad request", message: "Faltan datos" });
         }
-        const { email, name } = req.body;
+        const { email } = req.body;
 
         const token = req.headers.authorization.split(" ")[1];
         const decoded = JWTValidator(token);
@@ -65,7 +65,7 @@ router.post('/getInventorys', async (req, res) => {
             return res.status(403).json({ error: "Forbidden", message: "Acceso denegado, el token no le pertenece a este usuario" });
         }
 
-        const inventory = await InventoryManager.getAllInventories(email, name);
+        const inventory = await InventoryManager.getAllInventories(email);
 
         if(!inventory.status) {
             return res.status(inventory.code).json({ error: inventory.error, message: inventory.message });
