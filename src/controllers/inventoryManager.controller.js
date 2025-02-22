@@ -8,7 +8,7 @@ const InventorytModel = require("../models/inventorys.model.js");
 
 class ProductManager {
 
-    //OK - Testeado ✅ - DOCUMENTADO ❌
+    //OK - Testeado ✅
     async getInventory(email, name) {
 
         try {
@@ -164,7 +164,7 @@ class ProductManager {
             };
         }
     }
-    //OK - Testeado ✅ - DOCUMENTADO ❌
+    //OK - Testeado ✅
     async getItems(props) {
         try {
             const { 
@@ -266,7 +266,7 @@ class ProductManager {
             };
         }
     }
-    //OK - Testeado ✅ - DOCUMENTADO ❌
+    //OK - Testeado ✅
     async getAllInventories(email) {
         try {
 
@@ -305,7 +305,7 @@ class ProductManager {
             };
         }
     }
-    //OK - Testeado ✅ - DOCUMENTADO ❌
+    //OK - Testeado ✅
     async deleteAllInventories(email) {
         if(!email) return {
             code: 400,
@@ -318,7 +318,7 @@ class ProductManager {
 
         return { status:true, inventories: inventoriesList}
     }
-    //OK - Testeado ✅ - DOCUMENTADO ❌
+    //OK - Testeado ✅
     async deletInventory(email, name) {
         if(!email || !name) return {
             code: 400,
@@ -342,7 +342,7 @@ class ProductManager {
         }
 
     }
-    //OK - Testado ✅ - DOCUMENTADO ❌
+    //OK - Testado ✅
     async getItemByCode(props) {
         try {
             const { email, inventoryName, code } = props;
@@ -382,10 +382,12 @@ class ProductManager {
             };
         }
     }
-    //OK - Testeado ✅ - DOCUMENTADO ❌
-    async updateProduct(props) {
+    //OK - Testeado ✅
+    async updateItemByCode(props) {
         try {
-            const { email, inventoryName, name, description, price, code, stock, category, subCategory, thumbnail } = props;
+            const { 
+                email, inventoryName, name, description, price, code, stock, category, subCategory, thumbnail 
+            } = props;
             const updateData = { name, description, price, stock, category, subCategory, thumbnail };
             const SelectedInventory = await this.getInventory(email, inventoryName);
     
@@ -430,8 +432,71 @@ class ProductManager {
             };
         }
     }
-    //Revisar - Testeado ✅ - DOCUMENTADO ❌
-    async deleteProduct(props) {
+    //OK - Testeado ❌
+    async updateInventory(props) {
+        try {
+            const { email, inventoryName, percInc, promoList } = props;
+            const SelectedInventory = await this.getInventory(email, inventoryName);
+    
+            if (!SelectedInventory.status) {
+                return {
+                    error: SelectedInventory.error,
+                    message: SelectedInventory.message,
+                    status: false
+                };
+            }
+
+            if(percInc){
+                SelectedInventory.inventory.items.map(item => {
+                    item.price = item.price + (item.price * percInc);
+                    return item;
+                });
+            }
+
+            const updateError = {
+                code: 400,
+                error: 'Invalid request',
+                message: 'La lista de promociones no tiene el formato correcto',
+                status: false,
+                errDetect: false
+            }
+
+            if(promoList) {
+
+                selectedInventory.inventory.items.map(item => {
+
+                    const invItem = promoList.find(promo => promo.code === item.code);
+                    if(!invItem) {
+                        updateError.code = 404;
+                        updateError.error = 'Not Found';
+                        updateError.message = `El código: ${item.code} no existe en su inventario`;
+                        updateError.errDetect = true;
+                        return;
+                    }
+                    item.price = promoList.price;
+
+                    return item;
+                });
+            }
+    
+            await SelectedInventory.inventory.save();
+    
+            return {
+                status: true,
+                inventory: SelectedInventory.inventory.toObject() // Devuelve el objeto actualizado
+            };
+        } catch (error) {
+            console.log("Error al actualizar el inventario", error);
+            errorHanlder.controllerError('ProductManager - updateInventory', error);
+            return {
+                error: 'Internal server error',
+                message: 'Hubo un problema al actualizar el inventario',
+                status: false
+            };
+        }
+    }
+    //Revisar - Testeado ✅
+    async deleteItem(props) {
         try {
             const { email, inventoryName, code } = props;
             const SelectedInventory = await this.getInventory(email, inventoryName);

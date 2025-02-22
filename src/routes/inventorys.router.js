@@ -12,7 +12,7 @@ const JWTValidator = require("../services/tokenValidator.js");
 
 //RUTAS:
 
-//Nuevo inventario - Testeado ✅
+//Nuevo inventario - Testeado ✅ - DOCUMENTADO ✅
 router.post('/newInventory', async (req, res) => {
 
     try {
@@ -47,7 +47,7 @@ router.post('/newInventory', async (req, res) => {
         });
     }
 });
-//Obtener todos los inventarios - Testeado ✅
+//Obtener todos los inventarios - Testeado ✅ - DOCUMENTADO ❌
 router.post('/getInventorys', async (req, res) => {
 
     try {
@@ -82,7 +82,7 @@ router.post('/getInventorys', async (req, res) => {
         });
     }
 });
-//Agregar item - Testeado ✅
+//Agregar item - Testeado ✅ - DOCUMENTADO ✅
 router.post('/addItems', async (req, res) => {
 
     try {
@@ -116,7 +116,7 @@ router.post('/addItems', async (req, res) => {
         });
     }
 });
-//Obtener inventario - Testeado ✅
+//Obtener inventario - Testeado ✅ - DOCUMENTADO ❌
 router.post('/getItems', async (req, res) => {
 
     try {
@@ -149,7 +149,7 @@ router.post('/getItems', async (req, res) => {
         });
     }
 });
-//Obtener item por ID - Testeado ✅
+//Obtener item por ID - Testeado ✅ - DOCUMENTADO ❌
 router.post('/getItemByCode', async (req, res) => {
     try {
         if(!req.body.email) {
@@ -181,7 +181,7 @@ router.post('/getItemByCode', async (req, res) => {
         });
     }
 });
-//Actualizar item - Testeado ✅
+//Actualizar item - Testeado ✅ - DOCUMENTADO ❌
 router.put('/updateItem', async (req, res) => {
 
     try {
@@ -198,7 +198,7 @@ router.put('/updateItem', async (req, res) => {
             return res.status(403).json({ error: "Forbidden", message: "Acceso denegado, el token no le pertenece a este usuario" });
         }
 
-        const updatedProduct = await InventoryManager.updateProduct(req.body);
+        const updatedProduct = await InventoryManager.updateItemByCode(req.body);
 
         if(!updatedProduct.status) {
             return res.status(400).json({ error: updatedProduct.error, message: updatedProduct.message });
@@ -215,7 +215,7 @@ router.put('/updateItem', async (req, res) => {
         });
     }
 });
-//Eliminar item Testeado ✅
+//Eliminar item Testeado ✅ - DOCUMENTADO ❌
 router.delete('/deleteItem', async (req, res) => {
     try {
         if(!req.body.email) {
@@ -231,7 +231,7 @@ router.delete('/deleteItem', async (req, res) => {
             return res.status(403).json({ error: "Forbidden", message: "Acceso denegado, el token no le pertenece a este usuario" });
         }
 
-        const deletedProduct = await InventoryManager.deleteProduct(req.body);
+        const deletedProduct = await InventoryManager.deleteItem(req.body);
 
         if(!deletedProduct.status) {
             return res.status(400).json({ error: deletedProduct.error, message: deletedProduct.message });
