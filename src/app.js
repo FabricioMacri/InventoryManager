@@ -70,6 +70,13 @@ app.post("/testing", (req, res) => {
         return res.status(500).send("Internal server error");
     }
 });
+app.get('/hello', (req, res) => {
+    res.status(200).send({ message: 'Hola, mundo!' });
+  });
+  
+  app.post('/echo', (req, res) => {
+    res.status(200).send(req.body);
+  });
 app.use("/client", clientRouter);
 app.use("/users", usersRouter);
 
@@ -78,3 +85,5 @@ app.listen(PUERTO, () => {
 
     console.log('Escuchando puerto: ' + PUERTO);
 })
+
+module.exports = app;

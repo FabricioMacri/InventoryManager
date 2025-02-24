@@ -164,7 +164,7 @@ class ProductManager {
             };
         }
     }
-    //OK - Testeado ✅
+    //OK - Testeado ✅ - DOCUMENTADO ✅
     async getItems(props) {
         try {
             const { 
@@ -266,7 +266,7 @@ class ProductManager {
             };
         }
     }
-    //OK - Testeado ✅
+    //OK - Testeado ✅ - DOCUMENTADO ✅
     async getAllInventories(email) {
         try {
 
@@ -305,7 +305,7 @@ class ProductManager {
             };
         }
     }
-    //OK - Testeado ✅
+    //OK - Testeado ✅ - DOCUMENTADO ✅
     async deleteAllInventories(email) {
         if(!email) return {
             code: 400,
@@ -432,7 +432,7 @@ class ProductManager {
             };
         }
     }
-    //OK - Testeado ❌
+    //OK - Testeado ✅
     async updateInventory(props) {
         try {
             const { email, inventoryName, percInc, promoList } = props;
@@ -463,7 +463,7 @@ class ProductManager {
 
             if(promoList) {
 
-                selectedInventory.inventory.items.map(item => {
+                SelectedInventory.inventory.items.map(item => {
 
                     const invItem = promoList.find(promo => promo.code === item.code);
                     if(!invItem) {

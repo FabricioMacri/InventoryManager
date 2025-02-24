@@ -27,7 +27,7 @@ paths:
           $ref: '#/components/responses/Conflict'
         500:
           $ref: '#/components/responses/serverError'
-  clients/getInventorys:
+  /clients/getInventorys:
     post:
       tags:
       - Obtener inventarios
@@ -77,6 +77,59 @@ paths:
           $ref: '#/components/responses/Conflict'
         500:
           $ref: '#/components/responses/serverError'
+  /clients/deleteInventory:
+    post:
+      tags:
+      - Borra un inventario
+      summary: Borra un de los inventarios asociado a tu cuenta
+      parameters:
+      - $ref: '#/components/parameters/token'
+      requestBody:
+        content:
+          aplication/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: Email del usuario.
+                inventoryName:
+                  type: string
+                  description: Nombre del inventario que quieres eliminar.
+        required: true
+      responses:
+        200:
+          description: (OK) Inventario eliminado correctamente.
+          content:
+            aplication/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Mensaje de éxito.
+                  inventory:
+                    type: object
+                    description: Inventario eliminado
+                    properties:
+                      email:
+                        type: string
+                        description: Email del usuario.
+                      inventoryName:
+                        type: string
+                        description: Nombre del inventario al que quieres agregar los items.
+                      list:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Items'
+        400:
+          $ref: '#/components/responses/badRequest'
+        403:
+          $ref: '#/components/responses/Forbidden'
+        409:
+          $ref: '#/components/responses/Conflict'
+        500:
+          $ref: '#/components/responses/serverError'
   /clients/addItems:
     post:
       tags:
@@ -104,6 +157,328 @@ paths:
       responses:
         200:
           description: (OK) Items agregados con éxito.
+          content:
+            aplication/json:
+              schema:
+                $ref: '#/components/schemas/exitoNewInventory'
+        400:
+          $ref: '#/components/responses/badRequest'
+        403:
+          $ref: '#/components/responses/Forbidden'
+        409:
+          $ref: '#/components/responses/Conflict'
+        500:
+          $ref: '#/components/responses/serverError'
+  /clients/getItems:
+    post:
+      tags:
+      - Obtener Items
+      summary: Obten todos los items de un inventario.
+      parameters:
+      - $ref: '#/components/parameters/token'
+      requestBody:
+        content:
+          aplication/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: Email del usuario.
+                inventoryName:
+                  type: string
+                  description: Nombre del inventario que quieres obtener.
+                available:
+                  type: boolean
+                  description: Activando esta opcion se retornara una lista que solo contiene items disponibles.
+                category:
+                  type: string
+                  description: Activando esta opcion se retornara una lista que tiene sublistas con cada categoria.
+                alfabetic:
+                  type: boolean
+                  description: Activando esta opcion se retornara una lista ordenada alfabeticamente.
+                stock:
+                  type: number
+                  description: se recibe un entero como filtro para retornar una lista que solo tenga items con stock mayor al valor recibido.
+                expensive:
+                  type: boolean
+                  description: Activando esta opcion se retornara una lista ordenada de mayor a menor precio.
+                search:
+                  type: string
+                  description: Se recibe un string como filtro para retornar una lista que solo tenga items que contengan el string recibido en su nombre.
+                stockList:
+                  type: boolean
+                  description: Activando esta opcion se retornara una lista solo con el nombre y el stock de cada item para facilitar el control de stock manual.
+                priceRange:
+                  type: object
+                  properties:
+                    min:
+                      type: number
+                      description: Precio mínimo.
+                    max:
+                      type: number
+                      description: Precio máximo.
+        required: true
+      responses:
+        200:
+          description: (OK) Items obtenidos con éxito.
+          content:
+            aplication/json:
+              schema:
+                type: object
+                description: El inventario que elegiste
+                properties:
+                  email:
+                    type: string
+                    description: Email del usuario.
+                  inventoryName:
+                    type: string
+                    description: Nombre del inventario al que quieres agregar los items.
+                  list:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Items'
+        400:
+          $ref: '#/components/responses/badRequest'
+        403:
+          $ref: '#/components/responses/Forbidden'
+        409:
+          $ref: '#/components/responses/Conflict'
+        500:
+          $ref: '#/components/responses/serverError'
+  /client/getAllInventories:
+    post:
+      tags:
+      - Obtener todos los inventarios
+      summary: Obten todos los inventarios vinculados a tu cuenta
+      parameters:
+      - $ref: '#/components/parameters/token'
+      requestBody:
+        content:
+          aplication/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: Email del usuario.
+        required: true
+      responses:
+        200:
+          description: (OK) Solicitud procesada correctamente.
+          content:
+            aplication/json:
+              schema:
+                type: array
+                description: Lista con todos los inventarios
+                properties:
+                  inventory:
+                    type: object
+                    description: Inventario con sus respectivos items
+                    properties:
+                      email:
+                        type: string
+                        description: Email del usuario.
+                      inventoryName:
+                        type: string
+                        description: Nombre del inventario al que quieres agregar los items.
+                      list:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Items'
+  /client/deleteAllInventories:
+    post:
+      tags:
+      - Borrar todos los inventarios
+      summary: Borra todos los inventarios asociados a tu cuenta
+      parameters:
+      - $ref: '#/components/parameters/token'
+      requestBody:
+        content:
+          aplication/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: Email del usuario.
+        required: true
+      responses:
+        200:
+          description: (OK) Inventario eliminado correctamente.
+          content:
+            aplication/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Mensaje de éxito.
+                  inventories:
+                    type: array
+                    description: Inventarios eliminados
+                    list:
+                      type: object
+                      properties:
+                        email:
+                          type: string
+                          description: Email del usuario.
+                        name:
+                          type: string
+                          description: Nombre del inventario al que quieres agregar los items.
+                        list:
+                          type: array
+                          items:
+                            $ref: '#/components/schemas/Items'
+        400:
+          $ref: '#/components/responses/badRequest'
+        403:
+          $ref: '#/components/responses/Forbidden'
+        409:
+          $ref: '#/components/responses/Conflict'
+        500:
+          $ref: '#/components/responses/serverError'
+  /client/getItemByCode:
+    post:
+      tags:
+      - Obtener Item por código
+      summary: Obten un item del inventario seleccionado por su código.
+      parameters:
+      - $ref: '#/components/parameters/token'
+      requestBody:
+        content:
+          aplication/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: Email del usuario.
+                inventoryName:
+                  type: string
+                  description: Nombre del inventario que quieres obtener.
+                code:
+                  type: string
+                  description: Código del item que quieres obtener.
+        required: true
+      responses:
+        200:
+          description: (OK) Item obtenido con éxito.
+          content:
+            aplication/json:
+              schema:
+                $ref: '#/components/schemas/Items'
+        400:
+          $ref: '#/components/responses/badRequest'
+        403:
+          $ref: '#/components/responses/Forbidden'
+        409:
+          $ref: '#/components/responses/Conflict'
+        500:
+          $ref: '#/components/responses/serverError'
+  /client/updateItem:
+    post:
+      tags:
+      - Actualizar Item
+      summary: Actualiza un item del inventario seleccionado.
+      parameters:
+      - $ref: '#/components/parameters/token'
+      requestBody:
+        content:
+          aplication/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: Email del usuario.
+                inventoryName:
+                  type: string
+                  description: Nombre del inventario que quieres actualizar.
+                code:
+                  type: string
+                  description: Código del item que quieres actualizar. Si proporciona este campo se entendera que solo desea actualizar un item y se modificaran los campos que envie.
+                name:
+                  type: string
+                  description: Nombre del item.
+                description:
+                  type: string
+                  description: Descripción del item.
+                price:
+                  type: number
+                  description: Precio del item.
+                status: 
+                  type: boolean
+                  description: Estado del item.
+                stock:
+                  type: number
+                  description: Stock del item.
+                category:
+                  type: string
+                  description: Categoría del item.
+                subCategory:
+                  type: string
+                  description: Categoría del item.
+                thumbnail:
+                  type: string
+                  description: URL de la imagen del item.
+                percInc:
+                  type: number
+                  description: Porcentaje de incremento del precio. Si envia este campo no debe enviar un codigo de producto para que se proceda a actualizar todo el inventario.
+                promoList:
+                  type: array
+                  description: Este campo se utiliza para actualizar el precio de varios items a la vez.
+                  items:
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                        description: Código del item que quieres actualizar.
+                      promo:
+                        type: number
+                        description: Precio del item.
+        required: true
+      responses:
+        200:
+          description: (OK) Item actualizado con éxito.
+          content:
+            aplication/json:
+              schema:
+                $ref: '#/components/schemas/exitoNewInventory'
+        400:
+          $ref: '#/components/responses/badRequest'
+        403:
+          $ref: '#/components/responses/Forbidden'
+        409:
+          $ref: '#/components/responses/Conflict'
+        500:
+          $ref: '#/components/responses/serverError'
+  /client/deleteItem:
+    post:
+      tags:
+      - Borrar Item
+      summary: Borra un item del inventario seleccionado.
+      parameters:
+      - $ref: '#/components/parameters/token'
+      requestBody:
+        content:
+          aplication/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: Email del usuario.
+                inventoryName:
+                  type: string
+                  description: Nombre del inventario que quieres actualizar.
+                code:
+                  type: string
+                  description: Código del item que quieres borrar.
+        required: true
+      responses:
+        200:
+          description: (OK) Item eliminado con éxito.
           content:
             aplication/json:
               schema:

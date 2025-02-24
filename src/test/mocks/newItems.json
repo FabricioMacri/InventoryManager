@@ -1,0 +1,113 @@
+[
+    {
+      "name": "Parachoques",
+      "description": "Parachoques de acero de alta resistencia para vehículos",
+      "code": "Op439d",
+      "price": 51214,
+      "status": true,
+      "stock": 55,
+      "category": "Carrocería",
+      "subCategory": "Parachoques",
+      "thumbnail": "https://ibb.co/r36jRDY"
+    },
+    {
+      "name": "Martillo",
+      "description": "Martillo de carpintero con mango de madera",
+      "code": "Mt1932",
+      "price": 1020,
+      "status": true,
+      "stock": 150,
+      "category": "Herramientas",
+      "subCategory": "Martillos",
+      "thumbnail": "https://ibb.co/martillo"
+    },
+    {
+      "name": "Taladro Eléctrico",
+      "description": "Taladro eléctrico de 500W con portabrocas automático",
+      "code": "Te4531",
+      "price": 7499,
+      "status": true,
+      "stock": 75,
+      "category": "Herramientas Eléctricas",
+      "subCategory": "Taladros",
+      "thumbnail": "https://ibb.co/taladro"
+    },
+    {
+      "name": "Destornillador",
+      "description": "Destornillador de estrella con mango ergonómico",
+      "code": "Ds9873",
+      "price": 450,
+      "status": true,
+      "stock": 300,
+      "category": "Herramientas",
+      "subCategory": "Destornilladores",
+      "thumbnail": "https://ibb.co/destornillador"
+    },
+    {
+      "name": "Llave Inglesa",
+      "description": "Llave inglesa ajustable de 8 pulgadas",
+      "code": "Li5674",
+      "price": 1200,
+      "status": true,
+      "stock": 90,
+      "category": "Herramientas",
+      "subCategory": "Llaves",
+      "thumbnail": "https://ibb.co/llave-inglesa"
+    },
+    {
+      "name": "Cinta Métrica",
+      "description": "Cinta métrica de 5 metros con carcasa resistente",
+      "code": "Cm2389",
+      "price": 300,
+      "status": true,
+      "stock": 220,
+      "category": "Medición",
+      "subCategory": "Cintas Métricas",
+      "thumbnail": "https://ibb.co/cinta-metrica"
+    },
+    {
+      "name": "Sierra de Mano",
+      "description": "Sierra de mano con hoja de acero templado",
+      "code": "Sm4820",
+      "price": 980,
+      "status": true,
+      "stock": 110,
+      "category": "Herramientas",
+      "subCategory": "Sierras",
+      "thumbnail": "https://ibb.co/sierra"
+    },
+    {
+      "name": "Tornillos",
+      "description": "Caja de tornillos de acero inoxidable de 5mm",
+      "code": "Tr1234",
+      "price": 200,
+      "status": true,
+      "stock": 1000,
+      "category": "Fijaciones",
+      "subCategory": "Tornillos",
+      "thumbnail": "https://ibb.co/tornillos"
+    },
+    {
+      "name": "Llave de Tubo",
+      "description": "Llave de tubo para tuercas de 10mm",
+      "code": "Lt9876",
+      "price": 650,
+      "status": false,
+      "stock": 0,
+      "category": "Herramientas",
+      "subCategory": "Llaves",
+      "thumbnail": "https://ibb.co/llave-tubo"
+    },
+    {
+      "name": "Alicate",
+      "description": "Alicate de punta fina de 6 pulgadas",
+      "code": "Al7654",
+      "price": 750,
+      "status": true,
+      "stock": 130,
+      "category": "Herramientas",
+      "subCategory": "Alicates",
+      "thumbnail": "https://ibb.co/alicate"
+    }
+  ]
+  
