@@ -183,7 +183,7 @@ router.post('/getItems', async (req, res) => {
         });
     }
 });
-//Obtener item por ID - Testeado ✅ - DOCUMENTADO ❌
+//Obtener item por ID - Testeado ✅ - DOCUMENTADO ✅ 
 router.post('/getItemByCode', async (req, res) => {
     try {
         if(!req.body.email) {
@@ -215,7 +215,7 @@ router.post('/getItemByCode', async (req, res) => {
         });
     }
 });
-//Actualizar item - Testeado ✅ - DOCUMENTADO ❌
+//Actualizar item - Testeado ✅ - DOCUMENTADO ✅ 
 router.put('/updateItem', async (req, res) => {
 
     try {
@@ -250,7 +250,7 @@ router.put('/updateItem', async (req, res) => {
         });
     }
 });
-//Eliminar item Testeado ✅ - DOCUMENTADO ❌
+//Eliminar item Testeado ✅ - DOCUMENTADO ✅ 
 router.delete('/deleteItem', async (req, res) => {
     try {
         if(!req.body.email) {

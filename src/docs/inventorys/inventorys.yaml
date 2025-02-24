@@ -377,7 +377,7 @@ paths:
         500:
           $ref: '#/components/responses/serverError'
   /client/updateItem:
-    post:
+    put:
       tags:
       - Actualizar Item
       summary: Actualiza un item del inventario seleccionado.
@@ -454,7 +454,7 @@ paths:
         500:
           $ref: '#/components/responses/serverError'
   /client/deleteItem:
-    post:
+    delete:
       tags:
       - Borrar Item
       summary: Borra un item del inventario seleccionado.

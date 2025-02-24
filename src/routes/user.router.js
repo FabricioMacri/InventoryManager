@@ -14,7 +14,7 @@ const inventoryManager = new InventoryManager();
 
 //Rutas user:
 
-//Register - Testeado ✅ - DOCUMENTADO ❌
+//Register - Testeado ✅ - DOCUMENTADO ✅
 router.post("/register", async (req, res) => {
     const { name, email, password } = req.body;
     try {
@@ -35,13 +35,11 @@ router.post("/register", async (req, res) => {
             { expiresIn: '12h' }
         );
 
-        const clearUser = {
+        return res.status(200).json({ 
             name: newUser.user.name, 
             email: newUser.user.email,
-            token
-        };
-
-        return res.status(200).json({ clearUser });
+            token 
+        });
         /* Si esta API estuviera directamente conectada a un front-end, se podría utilizar una cookie,
             en este caso se utiliza una respuesta JSON porque es un API de prueba
 
@@ -61,7 +59,7 @@ router.post("/register", async (req, res) => {
     }
 
 })
-//Login - Testeado ✅ - DOCUMENTADO ❌
+//Login - Testeado ✅ - DOCUMENTADO ✅
 router.post("/login", async (req, res) => {
     const {email, password} = req.body;
     try {
@@ -82,13 +80,11 @@ router.post("/login", async (req, res) => {
             { expiresIn: '12h' }
         );
 
-        const clearUser = {
+        return res.status(200).json({ 
             name: user.user.name, 
             email: user.user.email,
-            token
-        };
-
-        return res.status(200).json({ clearUser });
+            token 
+        });
         //return res.status(200).cookie(mi_key, token, { maxAge: 3600000, httpOnly: true, secure: true });
 
     } catch (error) {
@@ -103,7 +99,7 @@ router.post("/login", async (req, res) => {
 
 //Rutas Admin: 
 
-//login Admin: Testeado ✅ - DOCUMENTADO ❌
+//login Admin: Testeado ✅
 router.post("/loginAdmin", async (req, res) => {
     const {email, password} = req.body; 
 
@@ -139,14 +135,14 @@ router.post("/loginAdmin", async (req, res) => {
         });
     }
 })
-//Logout: Testeado ✅ - DOCUMENTADO ❌
+//Logout: Testeado ✅
 router.post("/logout", (req, res) => {
     
     req.session.destroy();
     
     return res.status(200).json({mensaje: "Sesión cerrada con éxito"});
 })
-//Ver usuarios: Testeado ✅ - DOCUMENTADO ❌
+//Ver usuarios: Testeado ✅
 router.post("/getUsers", async (req, res) => {
     try {
         if(!req.session.login) {
@@ -168,7 +164,7 @@ router.post("/getUsers", async (req, res) => {
         });
     }
 });
-//Eliminar un usuario: Testeado ✅ - DOCUMENTADO ❌
+//Eliminar un usuario: Testeado ✅
 router.post("/deleteUser", async (req, res) => {
 
     try {

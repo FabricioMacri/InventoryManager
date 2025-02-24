@@ -1,0 +1,122 @@
+paths:
+  /users/register:
+    post:
+      tags:
+      - Registrarse un nuevo usuario
+      summary: Registrar un nuevo usuario
+      requestBody:
+        content:
+          aplication/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Nombre del usuario
+                  example: Metalurgica Progress S.A
+                email:
+                  type: string
+                  description: Correo del usuario
+                  example: gestion@progress.com
+                password:
+                  type: string
+                  description: Contraseña del usuario
+                  example: 123456
+        required: true
+      responses:
+        200:
+          description: (OK) Usuario registrado con éxito.
+          content:
+            aplication/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    description: Nombre del usuario
+                    example: Metalurgica Progress S.A
+                  email:
+                    type: string
+                    description: Correo del usuario
+                    example: gestion@progress.com
+                  token:
+                    type: string
+                    description: Token de autenticación
+        400:
+          $ref: '#/components/responses/badRequest'
+        409:
+          $ref: '#/components/responses/Conflict'
+        500:
+          $ref: '#/components/responses/serverError'
+  /users/login:
+    post:
+      tags:
+      - Login
+      summary: Iniciar sesion con una cuenta.
+      parameters:
+      - $ref: '#/components/parameters/token'
+      requestBody:
+        content:
+          aplication/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: Email del usuario.
+                password:
+                  type: string
+                  description: Contraseña del usuario.
+        required: true
+      responses:
+        200:
+          description: (OK) Usuario logueado con éxito.
+          content:
+            aplication/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    description: Nombre del usuario
+                    example: Metalurgica Progress S.A
+                  email:
+                    type: string
+                    description: Correo del usuario
+                    example: gestion@progress.com
+                  token:
+                    type: string
+                    description: Token de autenticación
+        400:
+          $ref: '#/components/responses/badRequest'
+        403:
+          $ref: '#/components/responses/Forbidden'
+        409:
+          $ref: '#/components/responses/Conflict'
+        500:
+          $ref: '#/components/responses/serverError'
+
+  components:
+  responses:
+    Forbidden:
+      description: (Forbidden) Acceso denegado, las credenciales enviadas no son válidas.
+    Unauthorized:
+      description: (Unauthorized) No posee las credenciales necesarias para esta petición.
+    badRequest:
+      description: (Bad Request) Faltan parametros en la petición.
+    Conflict:
+      description: (Conflict) Ya existe un recurso con ese valor.
+    serverError:
+      description: (Internal Server Error) Hubo un problema con el servidor al procesar la petición.
+    
+  schemas:
+    
+
+  parameters:
+    token:
+      in: header
+      name: token
+      description: Token de autenticación.
+      required: true
+      schema:
+        type: string
