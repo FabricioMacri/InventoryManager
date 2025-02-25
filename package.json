@@ -5,7 +5,7 @@
   "main": "./src/app.js",
   "devDependencies": {
     "@eslint/js": "^9.20.0",
-    "chai": "^5.2.0",
+    "chai": "^4.3.4",
     "chai-http": "^4.3.0",
     "eslint": "^8.57.1",
     "eslint-plugin-mocha": "^10.5.0",

@@ -319,7 +319,7 @@ class ProductManager {
         return { status:true, inventories: inventoriesList}
     }
     //OK - Testeado ✅
-    async deletInventory(email, name) {
+    async deleteInventory(email, name) {
         if(!email || !name) return {
             code: 400,
             error: 'Invalid request',
@@ -327,16 +327,22 @@ class ProductManager {
             status: false
         };
 
-        const inventory = await this.getInventory(email, name);
+        const result = await this.getInventory(email, name);
 
-        if (inventory) {
-            const result = await InventorytModel.deleteOne({ _id: inventory._id });
-            return { status: true, user: result };
+        if (result.status) {
+            const invDeleted = await InventorytModel.deleteOne({ _id: result.inventory._id });
+            if(!invDeleted) return {
+                code: 500,
+                error: 'Internal server error',
+                message: 'Hubo un problema al eliminar el inventario',
+                status: false
+            };
+            return { status: true, user: invDeleted };
         } else {
             return {
-                code: inventory.code,
-                error: inventory.error,
-                message: inventory.message,
+                code: result.code,
+                error: result.error,
+                message: result.message,
                 status: false
             };
         }

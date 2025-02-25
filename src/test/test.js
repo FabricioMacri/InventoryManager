@@ -20,6 +20,7 @@ NOTA: Esta API es experimental, tiene fines de mostrar mi conocimiento y esta do
 
 describe('API Tests', () => {
   let token;
+  //LOGIN - 200
   it("Se envia las credenciales para loguear en una cuenta y se recupera el TOKEN", (done) => {
     chai.request(app)
       .post('/users/login')
@@ -39,7 +40,7 @@ describe('API Tests', () => {
         }
       });   
   });
-
+  //CREATE INVENTORY - 200
   it('Se utiliza el TOKEN recuperado y se crea un inventario', (done) => {
     chai.request(app)
       .post('/client/newInventory')
@@ -60,12 +61,12 @@ describe('API Tests', () => {
         }
       });
   });
-
+  //CREATE PRODUCTS - 200
   it('Se crea un producto en el nuevo inventario', (done) => {
     chai.request(app)
-      .post('/client/newProduct')
+      .post('/client/addItems')
       .set('Authorization', `Bearer ${token}`) 
-      .send({ email: 'ferreteriagonzalez@gmail.com', name: 'inventario_general', list: newItems })
+      .send({ email: 'ferreteriagonzalez@gmail.com', inventoryName: 'inventario_general', list: newItems })
       .end((err, res) => {
         if (err) {
           console.error('Error en la solicitud:', err);
@@ -74,7 +75,7 @@ describe('API Tests', () => {
         try {
           expect(res).to.have.status(200);
           expect(res.body).to.be.an('object');
-          expect(res.body.message).to.equal('Acceso autorizado');
+          expect(res.body.message).to.equal('Producto registrado con éxito');
           done();
         } catch (err) {
           console.error('Error en las expectativas:', err);
@@ -82,6 +83,7 @@ describe('API Tests', () => {
         }
       });
   });
+  //GET INVENTORYS - 200
   it('Se obtiene la lista de inventarios', (done) => {
     chai.request(app)
       .post('/client/getInventorys')
@@ -95,7 +97,7 @@ describe('API Tests', () => {
         try {
           expect(res).to.have.status(200);
           expect(res.body).to.be.an('object');
-          expect(res.body).to.have.property('inventorys');
+          expect(res.body).to.have.property('inventory');
           done();
         } catch (err) {
           console.error('Error en las expectativas:', err);
@@ -103,8 +105,8 @@ describe('API Tests', () => {
         }
       });
   });
-
-  it('Se pide la lista de inventarios pero sin el token para que no nos autorice', (done) => {
+  //GET INVENTORYS - 401
+  it('No se envia el token para que no autorice la petición', (done) => {
     chai.request(app)
       .post('/client/getInventorys')
       .send({ email: 'ferreteriagonzalez@gmail.com' })
@@ -123,10 +125,10 @@ describe('API Tests', () => {
         }
       });
   });
-
-  it('Se pide la lista de inventarios pero sin el token para que no nos autorice', (done) => {
+  //DELETE INVENTORY - 200
+  it('Se elimina el inventario creado', (done) => {
     chai.request(app)
-      .post('/client/deleteInventory')
+      .delete('/client/deleteInventory')
       .set('Authorization', `Bearer ${token}`) 
       .send({ email: 'ferreteriagonzalez@gmail.com', name: 'inventario_general' })
       .end((err, res) => {

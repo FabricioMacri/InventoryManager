@@ -21,6 +21,9 @@ router.post('/newInventory', async (req, res) => {
         }
         const { email, name } = req.body;
 
+        if(!req.headers.authorization){
+            return res.status(401).json({ error: "Unauthorized", message: "No autorizado" });
+        }
         const token = req.headers.authorization.split(" ")[1];
         const decoded = JWTValidator(token);
         if(!decoded.status) {
@@ -56,6 +59,9 @@ router.post('/getInventorys', async (req, res) => {
         }
         const { email } = req.body;
 
+        if(!req.headers.authorization){
+            return res.status(401).json({ error: "Unauthorized", message: "No autorizado" });
+        }
         const token = req.headers.authorization.split(" ")[1];
         const decoded = JWTValidator(token);
         if(!decoded.status) {
@@ -83,13 +89,16 @@ router.post('/getInventorys', async (req, res) => {
     }
 });
 //Eliminar inventario - Testeado ✅ - DOCUMENTADO ✅ 
-router.post('/deleteInventory', async (req, res) => {
+router.delete('/deleteInventory', async (req, res) => {
     try {
         if(!req.body.email) {
             return res.status(400).json({ error: "Bad request", message: "Faltan datos" });
         }
         const { email, name } = req.body;
 
+        if(!req.headers.authorization){
+            return res.status(401).json({ error: "Unauthorized", message: "No autorizado" });
+        }
         const token = req.headers.authorization.split(" ")[1];
         const decoded = JWTValidator(token);
         if(!decoded.status) {
@@ -99,7 +108,7 @@ router.post('/deleteInventory', async (req, res) => {
             return res.status(403).json({ error: "Forbidden", message: "Acceso denegado, el token no le pertenece a este usuario" });
         }
 
-        const deletedInventory = await InventoryManager.deletInventory(email, name);
+        const deletedInventory = await InventoryManager.deleteInventory(email, name);
 
         if(!deletedInventory.status) {
             return res.status(deletedInventory.code).json({ error: deletedInventory.error, message: deletedInventory.message });
@@ -124,6 +133,9 @@ router.post('/addItems', async (req, res) => {
             return res.status(400).json({ error: "Bad request", message: "Faltan datos" });
         }
 
+        if(!req.headers.authorization){
+            return res.status(401).json({ error: "Unauthorized", message: "No autorizado" });
+        }
         const token = req.headers.authorization.split(" ")[1];
         const decoded = JWTValidator(token);
         if(!decoded.status) {
@@ -157,6 +169,9 @@ router.post('/getItems', async (req, res) => {
         if(!req.body.email) {
             return res.status(400).json({ error: "Bad request", message: "Faltan datos" });
         }
+        if(!req.headers.authorization){
+            return res.status(401).json({ error: "Unauthorized", message: "No autorizado" });
+        }
         const token = req.headers.authorization.split(" ")[1];
         const decoded = JWTValidator(token);
         if(!decoded.status) {
@@ -189,7 +204,9 @@ router.post('/getItemByCode', async (req, res) => {
         if(!req.body.email) {
             return res.status(400).json({ error: "Bad request", message: "Faltan datos" });
         }
-
+        if(!req.headers.authorization){
+            return res.status(401).json({ error: "Unauthorized", message: "No autorizado" });
+        }
         const token = req.headers.authorization.split(" ")[1];
         const decoded = JWTValidator(token);
         if(!decoded.status) {
@@ -222,7 +239,9 @@ router.put('/updateItem', async (req, res) => {
         if(!req.body.email) {
             return res.status(400).json({ error: "Bad request", message: "Faltan datos" });
         }
-
+        if(!req.headers.authorization){
+            return res.status(401).json({ error: "Unauthorized", message: "No autorizado" });
+        }
         const token = req.headers.authorization.split(" ")[1];
         const decoded = JWTValidator(token);
         if(!decoded.status) {
@@ -256,7 +275,9 @@ router.delete('/deleteItem', async (req, res) => {
         if(!req.body.email) {
             return res.status(400).json({ error: "Bad request", message: "Faltan datos" });
         }
-
+        if(!req.headers.authorization){
+            return res.status(401).json({ error: "Unauthorized", message: "No autorizado" });
+        }
         const token = req.headers.authorization.split(" ")[1];
         const decoded = JWTValidator(token);
         if(!decoded.status) {
