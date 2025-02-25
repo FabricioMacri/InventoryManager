@@ -78,7 +78,7 @@ paths:
         500:
           $ref: '#/components/responses/serverError'
   /clients/deleteInventory:
-    post:
+    delete:
       tags:
       - Borra un inventario
       summary: Borra un de los inventarios asociado a tu cuenta
@@ -238,98 +238,6 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/Items'
-        400:
-          $ref: '#/components/responses/badRequest'
-        403:
-          $ref: '#/components/responses/Forbidden'
-        409:
-          $ref: '#/components/responses/Conflict'
-        500:
-          $ref: '#/components/responses/serverError'
-  /client/getAllInventories:
-    post:
-      tags:
-      - Obtener todos los inventarios
-      summary: Obten todos los inventarios vinculados a tu cuenta
-      parameters:
-      - $ref: '#/components/parameters/token'
-      requestBody:
-        content:
-          aplication/json:
-            schema:
-              type: object
-              properties:
-                email:
-                  type: string
-                  description: Email del usuario.
-        required: true
-      responses:
-        200:
-          description: (OK) Solicitud procesada correctamente.
-          content:
-            aplication/json:
-              schema:
-                type: array
-                description: Lista con todos los inventarios
-                properties:
-                  inventory:
-                    type: object
-                    description: Inventario con sus respectivos items
-                    properties:
-                      email:
-                        type: string
-                        description: Email del usuario.
-                      inventoryName:
-                        type: string
-                        description: Nombre del inventario al que quieres agregar los items.
-                      list:
-                        type: array
-                        items:
-                          $ref: '#/components/schemas/Items'
-  /client/deleteAllInventories:
-    post:
-      tags:
-      - Borrar todos los inventarios
-      summary: Borra todos los inventarios asociados a tu cuenta
-      parameters:
-      - $ref: '#/components/parameters/token'
-      requestBody:
-        content:
-          aplication/json:
-            schema:
-              type: object
-              properties:
-                email:
-                  type: string
-                  description: Email del usuario.
-        required: true
-      responses:
-        200:
-          description: (OK) Inventario eliminado correctamente.
-          content:
-            aplication/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    description: Mensaje de éxito.
-                  inventories:
-                    type: array
-                    description: Inventarios eliminados
-                    list:
-                      type: object
-                      properties:
-                        email:
-                          type: string
-                          description: Email del usuario.
-                        name:
-                          type: string
-                          description: Nombre del inventario al que quieres agregar los items.
-                        list:
-                          type: array
-                          items:
-                            $ref: '#/components/schemas/Items'
         400:
           $ref: '#/components/responses/badRequest'
         403:
